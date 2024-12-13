@@ -1,0 +1,95 @@
+<?php
+session_start();
+include('includes/koneksidb.php');
+include('includes/navbar.php'); 
+
+?>
+<?php
+// Periksa apakah pengguna login
+ $is_logged_in = isset($_SESSION['id']);
+
+// Dapatkan nama file saat ini
+$current_page = basename($_SERVER['PHP_SELF']);
+
+if (isset($_SESSION['success_message'])): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <?= $_SESSION['success_message']; ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <?php unset($_SESSION['success_message']); ?>
+<?php endif; ?>
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TPA - Beranda</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <header>
+    
+
+    </header>
+    <section class="hero bg-primary text-white text-center py-5">
+    <div class="container">
+        <h1>Selamat Datang di TPA</h1>
+        <p>Kami berkomitmen memberikan pendidikan terbaik untuk anak-anak.</p>
+    </div>
+</section>
+
+    <main class="container py-5">
+        <p>Ini adalah website resmi TPA. Di sini Anda bisa melihat informasi kegiatan, jadwal, dan berita terbaru.</p>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Kegiatan</h5>
+                        <p class="card-text">Lihat berbagai kegiatan menarik di TPA.</p>
+                        <a href="page/activities.php" class="btn btn-primary">Lihat Kegiatan</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Jadwal</h5>
+                        <p class="card-text">Cek jadwal terbaru kegiatan di TPA.</p>
+                        <a href="page/schedule.php" class="btn btn-primary">Lihat Jadwal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Kontak Kami</h5>
+                        <p class="card-text">Hubungi kami untuk informasi lebih lanjut.</p>
+                        <a href="page/contact.php" class="btn btn-primary">Hubungi Kami</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+<?php if (isset($_SESSION['id'])): ?>
+    <a href="/tpa-website/page/add_testimoni.php" class="sticky-testimoni">
+        <i class="fas fa-comment-dots"></i> Berikan Testimoni
+    </a>
+<?php endif; ?>
+
+    <footer>
+        <?php include 'includes/footer.php';?>
+    </footer>
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+    AOS.init();
+</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
