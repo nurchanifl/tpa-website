@@ -25,20 +25,14 @@ if ($_SESSION['role'] !== 'admin') {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="../assets/css/style.css" rel="stylesheet">
     <style>
-        /* Custom CSS untuk membuat layout lebih menarik */
         .card {
+            border-radius: 15px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
         .card:hover {
             transform: translateY(-10px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
-
-        .card-body {
-            padding: 30px;
-        }
-
         .icon-circle {
             width: 60px;
             height: 60px;
@@ -48,24 +42,9 @@ if ($_SESSION['role'] !== 'admin') {
             border-radius: 50%;
             font-size: 30px;
         }
-
         .btn-outline-light:hover {
             background-color: rgba(255, 255, 255, 0.2);
             color: #fff;
-        }
-
-        .row {
-            display: flex;
-            flex-wrap: wrap;
-        }
-
-        .col-md-6 {
-            margin-bottom: 20px;
-        }
-
-        /* Menambahkan space dan border radius untuk kesan lebih elegan */
-        .card {
-            border-radius: 15px;
         }
     </style>
 </head>
@@ -81,146 +60,102 @@ if ($_SESSION['role'] !== 'admin') {
         <p>Ini adalah halaman admin yang hanya bisa diakses oleh pengguna dengan hak akses admin.</p>
         
         <div class="row mt-4">
-            <!-- Tambah Santri -->
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-lg border-0 rounded-3 hover-zoom">
-                    <div class="card-body text-white rounded" style="background: linear-gradient(135deg, #28a745, #218838);">
-                        <div class="d-flex align-items-center">
-                            <div class="icon-circle bg-white text-success me-3 shadow-sm">
-                                <i class="fas fa-user-plus fs-3"></i>
-                            </div>
-                            <div>
-                                <h5 class="card-title mb-0">Tambah Santri</h5>
-                                <p class="card-text">Menambahkan santri baru ke dalam database.</p>
-                            </div>
-                        </div>
-                        <a href="../tingkat/tambah_santri.php" class="btn btn-outline-light mt-3 w-100 stretched-link">
-                            Tambahkan <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <?php
+            // Data menu untuk dashboard admin
+            $menus = [
+                [
+                    'title' => 'Tambah Santri',
+                    'description' => 'Menambahkan santri baru ke dalam database.',
+                    'icon' => 'fas fa-user-plus',
+                    'color' => 'linear-gradient(135deg, #28a745, #218838)',
+                    'link' => '../tingkat/tambah_santri.php'
+                ],
+                [
+                    'title' => 'Daftar Santri',
+                    'description' => 'Lihat daftar santri yang terdaftar di TPA.',
+                    'icon' => 'fas fa-users',
+                    'color' => 'linear-gradient(135deg, #17a2b8, #138496)',
+                    'link' => '../tingkat/daftar_santri.php'
+                ],
+                [
+                    'title' => 'Kelola Unit',
+                    'description' => 'Mengelola unit di TPA.',
+                    'icon' => 'fas fa-school',
+                    'color' => 'linear-gradient(135deg, #ffc107, #e0a800)',
+                    'link' => '../tingkat/unit.php'
+                ],
+                [
+                    'title' => 'Kelola Pengguna',
+                    'description' => 'Tambahkan, ubah, atau hapus pengguna dari sistem.',
+                    'icon' => 'fas fa-user-cog',
+                    'color' => 'linear-gradient(135deg, #dc3545, #c82333)',
+                    'link' => '../admin/manage_users.php'
+                ],
+                [
+                    'title' => 'Presensi Santri',
+                    'description' => 'Mencatat kehadiran santri per kelas.',
+                    'icon' => 'fas fa-clipboard-list',
+                    'color' => 'linear-gradient(135deg, #007bff, #0056b3)',
+                    'link' => '../tingkat/presensi_santri.php'
+                ],
+                [
+                    'title' => 'Data Presensi',
+                    'description' => 'Lihat dan filter data kehadiran santri.',
+                    'icon' => 'fas fa-table',
+                    'color' => 'linear-gradient(135deg, #6c757d, #495057)',
+                    'link' => '../tingkat/tampilkan_presensi.php'
+                ],
+                [
+                    'title' => 'Hari Libur',
+                    'description' => 'Atur hari libur untuk TPA.',
+                    'icon' => 'fas fa-calendar-alt',
+                    'color' => 'linear-gradient(135deg, #6c757d, #495057)',
+                    'link' => '../tingkat/hari_libur.php'
+                ],
+                [
+                    'title' => 'Tambah Galeri',
+                    'description' => 'Tambah foto dan video TPA.',
+                    'icon' => 'fas fa-image',
+                    'color' => 'linear-gradient(135deg, #6c757d, #495057)',
+                    'link' => 'upload_galeri.php'
+                ],
+                [
+                    'title' => 'Kelola Kategori Galeri',
+                    'description' => 'Mengelola Kategori galeri foto dan video TPA.',
+                    'icon' => 'fas fa-images',
+                    'color' => 'linear-gradient(135deg, #6c757d, #495057)',
+                    'link' => 'kelola_galeri_kategori.php'
+                ],
+                [
+                    'title' => 'Galeri',
+                    'description' => 'Lihat galeri foto dan video TPA.',
+                    'icon' => 'fas fa-images',
+                    'color' => 'linear-gradient(135deg, #6c757d, #495057)',
+                    'link' => 'galeri.php'
+                ],
+            ];
 
-            <!-- Daftar Santri -->
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-lg border-0 rounded-3 hover-zoom">
-                    <div class="card-body text-white rounded" style="background: linear-gradient(135deg, #17a2b8, #138496);">
-                        <div class="d-flex align-items-center">
-                            <div class="icon-circle bg-white text-info me-3 shadow-sm">
-                                <i class="fas fa-users fs-3"></i>
+            // Loop untuk menampilkan kartu menu
+            foreach ($menus as $menu): ?>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body text-white" style="background: <?= $menu['color']; ?>;">
+                            <div class="d-flex align-items-center">
+                                <div class="icon-circle bg-white text-dark me-3 shadow-sm">
+                                    <i class="<?= $menu['icon']; ?> fs-3"></i>
+                                </div>
+                                <div>
+                                    <h5 class="card-title mb-0"><?= $menu['title']; ?></h5>
+                                    <p class="card-text"><?= $menu['description']; ?></p>
+                                </div>
                             </div>
-                            <div>
-                                <h5 class="card-title mb-0">Daftar Santri</h5>
-                                <p class="card-text">Lihat daftar santri yang terdaftar di TPA.</p>
-                            </div>
+                            <a href="<?= $menu['link']; ?>" class="btn btn-outline-light mt-3 w-100 stretched-link">
+                                Akses <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
                         </div>
-                        <a href="../tingkat/daftar_santri.php" class="btn btn-outline-light mt-3 w-100 stretched-link">
-                            Lihat Daftar <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
                     </div>
                 </div>
-            </div>
-
-            <!-- Kelola Unit -->
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-lg border-0 rounded-3 hover-zoom">
-                    <div class="card-body text-white rounded" style="background: linear-gradient(135deg, #ffc107, #e0a800);">
-                        <div class="d-flex align-items-center">
-                            <div class="icon-circle bg-white text-warning me-3 shadow-sm">
-                                <i class="fas fa-school fs-3"></i>
-                            </div>
-                            <div>
-                                <h5 class="card-title mb-0">Kelola Unit</h5>
-                                <p class="card-text">Mengelola Unit di TPA.</p>
-                            </div>
-                        </div>
-                        <a href="../tingkat/unit.php" class="btn btn-outline-light mt-3 w-100 stretched-link">
-                            Kelola Unit <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Kelola Pengguna -->
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-lg border-0 rounded-3 hover-zoom">
-                    <div class="card-body text-white rounded" style="background: linear-gradient(135deg, #dc3545, #c82333);">
-                        <div class="d-flex align-items-center">
-                            <div class="icon-circle bg-white text-danger me-3 shadow-sm">
-                                <i class="fas fa-user-cog fs-3"></i>
-                            </div>
-                            <div>
-                                <h5 class="card-title mb-0">Kelola Pengguna</h5>
-                                <p class="card-text">Tambahkan, ubah, atau hapus pengguna dari sistem.</p>
-                            </div>
-                        </div>
-                        <a href="../admin/manage_users.php" class="btn btn-outline-light mt-3 w-100 stretched-link">
-                            Kelola <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Presensi Santri -->
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-lg border-0 rounded-3 hover-zoom">
-                    <div class="card-body text-white rounded" style="background: linear-gradient(135deg, #007bff, #0056b3);">
-                        <div class="d-flex align-items-center">
-                            <div class="icon-circle bg-white text-primary me-3 shadow-sm">
-                                <i class="fas fa-clipboard-list fs-3"></i>
-                            </div>
-                            <div>
-                                <h5 class="card-title mb-0">Presensi Santri</h5>
-                                <p class="card-text">Mencatat kehadiran santri per kelas.</p>
-                            </div>
-                        </div>
-                        <a href="../tingkat/presensi_santri.php" class="btn btn-outline-light mt-3 w-100 stretched-link">
-                            Presensi <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tampilkan Data Presensi -->
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-lg border-0 rounded-3 hover-zoom">
-                    <div class="card-body text-white rounded" style="background: linear-gradient(135deg, #6c757d, #495057);">
-                        <div class="d-flex align-items-center">
-                            <div class="icon-circle bg-white text-secondary me-3 shadow-sm">
-                                <i class="fas fa-table fs-3"></i>
-                            </div>
-                            <div>
-                                <h5 class="card-title mb-0">Data Presensi</h5>
-                                <p class="card-text">Lihat dan filter data kehadiran santri.</p>
-                            </div>
-                        </div>
-                        <a href="../tingkat/tampilkan_presensi.php" class="btn btn-outline-light mt-3 w-100 stretched-link">
-                            Lihat Presensi <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-         <!-- Tampilkan Data Presensi -->
-         <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-lg border-0 rounded-3 hover-zoom">
-                    <div class="card-body text-white rounded" style="background: linear-gradient(135deg, #6c757d, #495057);">
-                        <div class="d-flex align-items-center">
-                            <div class="icon-circle bg-white text-secondary me-3 shadow-sm">
-                                <i class="fas fa-table fs-3"></i>
-                            </div>
-                            <div>
-                                <h5 class="card-title mb-0">Hari Libur</h5>
-                                <p class="card-text">Lihat dan filter data kehadiran santri.</p>
-                            </div>
-                        </div>
-                        <a href="../tingkat/hari_libur.php" class="btn btn-outline-light mt-3 w-100 stretched-link">
-                            Lihat Presensi <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
     </main>
 
