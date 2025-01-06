@@ -4,10 +4,10 @@ include('../includes/koneksidb.php');
 include('../includes/navbar.php');
 
 // Cek apakah pengguna sudah login
-if (!isset($_SESSION['role']) ||  ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !=='user'))
-    { header("Location: ../index.php");
-        exit();
-    }
+if (!isset($_SESSION['role']) || ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'user')) {
+    header("Location: ../index.php");
+    exit();
+}
 
 // Default nilai untuk pagination
 $limit = 9;
@@ -91,39 +91,32 @@ $total_pages = ceil($total / $limit);
                 while ($row = mysqli_fetch_assoc($result)) {
                     $file_ext = pathinfo($row['foto'], PATHINFO_EXTENSION);
                     $thumbnail_path = '../thumbnails/' . basename($row['foto'], '.' . $file_ext) . '.png';
+                    $upload_path = '../uploads/' . $row['foto'];
 
                     echo '<div class="col-md-4 mb-4">';
                     echo '<div class="card">';
-                    
-                    // Menampilkan gambar thumbnail atau video thumbnail
-                    if (in_array($file_ext, ['mp4', 'avi', 'mov'])) {
-                        // Periksa apakah thumbnail untuk video ada
-                        if (file_exists($thumbnail_path)) {
-                            echo '<a href="' . htmlspecialchars($row['foto']) . '" data-lightbox="galeri" data-title="' . htmlspecialchars($row['judul']) . '">';
-                            echo '<img src="' . $thumbnail_path . '" class="card-img-top" alt="' . htmlspecialchars($row['judul']) . '">';
-                            echo '</a>';
-                        } else {
-                            // Thumbnail default untuk video
-                            echo '<a href="' . htmlspecialchars($row['foto']) . '" data-lightbox="galeri" data-title="' . htmlspecialchars($row['judul']) . '">';
-                            echo '<img src="../assets/img/default-thumbnail.png" class="card-img-top" alt="' . htmlspecialchars($row['judul']) . '">';
-                            echo '</a>';
-                        }
+
+                    // Menampilkan gambar thumbnail atau file asli
+                    if (file_exists($thumbnail_path)) {
+                        echo '<a href="' . htmlspecialchars($upload_path) . '" data-lightbox="galeri" data-title="' . htmlspecialchars($row['judul']) . '">';
+                        echo '<img src="' . htmlspecialchars($thumbnail_path) . '" class="card-img-top" alt="' . htmlspecialchars($row['judul']) . '">';
+                        echo '</a>';
                     } else {
-                        // Untuk file gambar biasa
-                        echo '<a href="' . htmlspecialchars($row['foto']) . '" data-lightbox="galeri" data-title="' . htmlspecialchars($row['judul']) . '">';
-                        echo '<img src="' . htmlspecialchars($row['foto']) . '" class="card-img-top" alt="' . htmlspecialchars($row['judul']) . '">';
+                        // Jika thumbnail tidak ditemukan, tampilkan file asli
+                        echo '<a href="' . htmlspecialchars($upload_path) . '" data-lightbox="galeri" data-title="' . htmlspecialchars($row['judul']) . '">';
+                        echo '<img src="' . htmlspecialchars($upload_path) . '" class="card-img-top" alt="' . htmlspecialchars($row['judul']) . '">';
                         echo '</a>';
                     }
-                    
+
                     echo '<div class="card-body">';
                     echo '<h5 class="card-title">' . htmlspecialchars($row['judul']) . '</h5>';
                     echo '<p class="card-text">' . htmlspecialchars($row['deskripsi']) . '</p>';
-                    
+
                     // Tombol Unduh untuk semua pengguna
                     echo '<div class="text-center mt-3">';
                     echo '<a href="unduh_galeri.php?file=' . urlencode($row['foto']) . '" class="btn btn-primary btn-sm">Unduh</a>';
                     echo '</div>';
-                    
+
                     // Tombol Edit dan Hapus hanya untuk admin
                     if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
                         echo '<div class="d-flex justify-content-between mt-3">';

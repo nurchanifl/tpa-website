@@ -3,12 +3,52 @@ session_start();
 include('../includes/koneksidb.php');
 include('../includes/navbar.php');
 
-// Cek apakah pengguna sudah login
-if (!isset($_SESSION['role']) ||  ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !=='user'))
-    { header("Location: ../index.php");
-        exit();
+// Cek apakah pengguna sudah login dan memiliki peran yang sesuai
+if (!isset($_SESSION['role']) || ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'user')) {
+    header("Location: ../index.php");
+    exit();
+}
+
+// Fungsi untuk membuat thumbnail dari gambar
+function buatThumbnailGambar($file_path, $thumbnail_path, $lebar_thumbnail = 200) {
+    list($lebar_asli, $tinggi_asli, $tipe_gambar) = getimagesize($file_path);
+
+    switch ($tipe_gambar) {
+        case IMAGETYPE_JPEG:
+            $gambar_asli = imagecreatefromjpeg($file_path);
+            break;
+        case IMAGETYPE_PNG:
+            $gambar_asli = imagecreatefrompng($file_path);
+            break;
+        case IMAGETYPE_GIF:
+            $gambar_asli = imagecreatefromgif($file_path);
+            break;
+        default:
+            return false; // Format tidak didukung
     }
 
+    $tinggi_thumbnail = ($lebar_thumbnail / $lebar_asli) * $tinggi_asli;
+    $thumbnail = imagecreatetruecolor($lebar_thumbnail, $tinggi_thumbnail);
+
+    imagecopyresampled($thumbnail, $gambar_asli, 0, 0, 0, 0, $lebar_thumbnail, $tinggi_thumbnail, $lebar_asli, $tinggi_asli);
+    
+    // Simpan thumbnail berdasarkan tipe gambar
+    switch ($tipe_gambar) {
+        case IMAGETYPE_JPEG:
+            imagejpeg($thumbnail, $thumbnail_path);
+            break;
+        case IMAGETYPE_PNG:
+            imagepng($thumbnail, $thumbnail_path);
+            break;
+        case IMAGETYPE_GIF:
+            imagegif($thumbnail, $thumbnail_path);
+            break;
+    }
+
+    imagedestroy($gambar_asli);
+    imagedestroy($thumbnail);
+    return true;
+}
 
 // Fungsi untuk membuat thumbnail dari video
 function buatThumbnailVideo($video_path, $thumbnail_path) {
@@ -30,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!is_dir($thumbnail_dir)) mkdir($thumbnail_dir, 0777, true);
 
     $allowed_ext = ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'avi', 'mov'];
-    
+
     $errors = [];
     $success_count = 0;
 
@@ -44,11 +84,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             continue;
         }
 
-               $new_file_name = time() . '_' . uniqid() . '.' . $file_ext;
+        $new_file_name = time() . '_' . uniqid() . '.' . $file_ext;
         $target_file = $target_dir . $new_file_name;
         $thumbnail_path = $thumbnail_dir . pathinfo($new_file_name, PATHINFO_FILENAME) . '.png';
 
         if (move_uploaded_file($tmp_name, $target_file)) {
+            // Buat thumbnail jika file adalah gambar
+            if (in_array($file_ext, ['jpg', 'jpeg', 'png', 'gif'])) {
+                if (!buatThumbnailGambar($target_file, $thumbnail_path)) {
+                    $errors[] = "Gagal membuat thumbnail untuk $file_name.";
+                }
+            }
+
             // Buat thumbnail jika file adalah video
             if (in_array($file_ext, ['mp4', 'avi', 'mov'])) {
                 if (!buatThumbnailVideo($target_file, $thumbnail_path)) {
@@ -60,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $sql = "INSERT INTO galeri (judul, deskripsi, kategori, foto, tanggal_upload) 
                     VALUES (?, ?, ?, ?, NOW())";
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, 'ssss', $judul, $deskripsi, $kategori, $target_file);
+            mysqli_stmt_bind_param($stmt, 'ssss', $judul, $deskripsi, $kategori, $new_file_name);
 
             if (mysqli_stmt_execute($stmt)) {
                 $success_count++;
@@ -84,7 +131,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
-
 ?>
 
 <!DOCTYPE html>
