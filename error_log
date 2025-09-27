@@ -1,0 +1,70 @@
+[05-Jan-2025 10:27:03 UTC] PHP Warning:  include(includes/koneksidb.php): Failed to open stream: No such file or directory in /home/siputlai/public_html/index.php on line 3
+[05-Jan-2025 10:27:03 UTC] PHP Warning:  include(): Failed opening 'includes/koneksidb.php' for inclusion (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/siputlai/public_html/index.php on line 3
+[05-Jan-2025 10:27:03 UTC] PHP Warning:  include(includes/navbar.php): Failed to open stream: No such file or directory in /home/siputlai/public_html/index.php on line 4
+[05-Jan-2025 10:27:03 UTC] PHP Warning:  include(): Failed opening 'includes/navbar.php' for inclusion (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/siputlai/public_html/index.php on line 4
+[05-Jan-2025 10:27:03 UTC] PHP Warning:  include(includes/footer.php): Failed to open stream: No such file or directory in /home/siputlai/public_html/index.php on line 85
+[05-Jan-2025 10:27:03 UTC] PHP Warning:  include(): Failed opening 'includes/footer.php' for inclusion (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/siputlai/public_html/index.php on line 85
+[15-May-2025 14:54:38 UTC] PHP Warning:  Undefined array key "username" in /home/siputlai/public_html/login.php on line 8
+[15-May-2025 14:54:38 UTC] PHP Warning:  Undefined array key "password" in /home/siputlai/public_html/login.php on line 9
+[15-May-2025 14:54:42 UTC] PHP Warning:  Undefined array key "username" in /home/siputlai/public_html/login.php on line 8
+[15-May-2025 14:54:42 UTC] PHP Warning:  Undefined array key "password" in /home/siputlai/public_html/login.php on line 9
+[26-Aug-2025 10:04:03 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Connection refused in /home/siputlai/public_html/includes/koneksidb.php:8
+Stack trace:
+#0 /home/siputlai/public_html/includes/koneksidb.php(8): mysqli->__construct()
+#1 /home/siputlai/public_html/index.php(3): include('/home/siputlai/...')
+#2 {main}
+  thrown in /home/siputlai/public_html/includes/koneksidb.php on line 8
+[26-Aug-2025 10:04:12 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Connection refused in /home/siputlai/public_html/includes/koneksidb.php:8
+Stack trace:
+#0 /home/siputlai/public_html/includes/koneksidb.php(8): mysqli->__construct()
+#1 /home/siputlai/public_html/index.php(3): include('/home/siputlai/...')
+#2 {main}
+  thrown in /home/siputlai/public_html/includes/koneksidb.php on line 8
+[26-Aug-2025 10:04:15 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Connection refused in /home/siputlai/public_html/includes/koneksidb.php:8
+Stack trace:
+#0 /home/siputlai/public_html/includes/koneksidb.php(8): mysqli->__construct()
+#1 /home/siputlai/public_html/index.php(3): include('/home/siputlai/...')
+#2 {main}
+  thrown in /home/siputlai/public_html/includes/koneksidb.php on line 8
+[26-Aug-2025 10:04:18 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Connection refused in /home/siputlai/public_html/includes/koneksidb.php:8
+Stack trace:
+#0 /home/siputlai/public_html/includes/koneksidb.php(8): mysqli->__construct()
+#1 /home/siputlai/public_html/index.php(3): include('/home/siputlai/...')
+#2 {main}
+  thrown in /home/siputlai/public_html/includes/koneksidb.php on line 8
+[26-Aug-2025 10:04:27 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Connection refused in /home/siputlai/public_html/includes/koneksidb.php:8
+Stack trace:
+#0 /home/siputlai/public_html/includes/koneksidb.php(8): mysqli->__construct()
+#1 /home/siputlai/public_html/index.php(3): include('/home/siputlai/...')
+#2 {main}
+  thrown in /home/siputlai/public_html/includes/koneksidb.php on line 8
+[26-Aug-2025 10:04:37 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Connection refused in /home/siputlai/public_html/includes/koneksidb.php:8
+Stack trace:
+#0 /home/siputlai/public_html/includes/koneksidb.php(8): mysqli->__construct()
+#1 /home/siputlai/public_html/index.php(3): include('/home/siputlai/...')
+#2 {main}
+  thrown in /home/siputlai/public_html/includes/koneksidb.php on line 8
+[26-Aug-2025 10:04:55 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Connection refused in /home/siputlai/public_html/includes/koneksidb.php:8
+Stack trace:
+#0 /home/siputlai/public_html/includes/koneksidb.php(8): mysqli->__construct()
+#1 /home/siputlai/public_html/index.php(3): include('/home/siputlai/...')
+#2 {main}
+  thrown in /home/siputlai/public_html/includes/koneksidb.php on line 8
+[26-Aug-2025 10:05:27 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Connection refused in /home/siputlai/public_html/includes/koneksidb.php:8
+Stack trace:
+#0 /home/siputlai/public_html/includes/koneksidb.php(8): mysqli->__construct()
+#1 /home/siputlai/public_html/index.php(3): include('/home/siputlai/...')
+#2 {main}
+  thrown in /home/siputlai/public_html/includes/koneksidb.php on line 8
+[26-Aug-2025 10:05:32 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Connection refused in /home/siputlai/public_html/includes/koneksidb.php:8
+Stack trace:
+#0 /home/siputlai/public_html/includes/koneksidb.php(8): mysqli->__construct()
+#1 /home/siputlai/public_html/index.php(3): include('/home/siputlai/...')
+#2 {main}
+  thrown in /home/siputlai/public_html/includes/koneksidb.php on line 8
+[26-Aug-2025 10:23:40 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Connection refused in /home/siputlai/public_html/includes/koneksidb.php:8
+Stack trace:
+#0 /home/siputlai/public_html/includes/koneksidb.php(8): mysqli->__construct()
+#1 /home/siputlai/public_html/index.php(3): include('/home/siputlai/...')
+#2 {main}
+  thrown in /home/siputlai/public_html/includes/koneksidb.php on line 8

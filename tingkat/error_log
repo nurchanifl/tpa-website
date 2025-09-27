@@ -1,0 +1,29 @@
+[26-Aug-2025 10:03:53 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Connection refused in /home/siputlai/public_html/includes/koneksidb.php:8
+Stack trace:
+#0 /home/siputlai/public_html/includes/koneksidb.php(8): mysqli->__construct()
+#1 /home/siputlai/public_html/tingkat/presensi_santri.php(3): include('/home/siputlai/...')
+#2 {main}
+  thrown in /home/siputlai/public_html/includes/koneksidb.php on line 8
+[26-Aug-2025 10:04:07 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Connection refused in /home/siputlai/public_html/includes/koneksidb.php:8
+Stack trace:
+#0 /home/siputlai/public_html/includes/koneksidb.php(8): mysqli->__construct()
+#1 /home/siputlai/public_html/tingkat/tampilkan_presensi.php(3): include('/home/siputlai/...')
+#2 {main}
+  thrown in /home/siputlai/public_html/includes/koneksidb.php on line 8
+[26-Aug-2025 10:04:10 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Connection refused in /home/siputlai/public_html/includes/koneksidb.php:8
+Stack trace:
+#0 /home/siputlai/public_html/includes/koneksidb.php(8): mysqli->__construct()
+#1 /home/siputlai/public_html/tingkat/tampilkan_presensi.php(3): include('/home/siputlai/...')
+#2 {main}
+  thrown in /home/siputlai/public_html/includes/koneksidb.php on line 8
+[26-Aug-2025 10:04:13 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Connection refused in /home/siputlai/public_html/includes/koneksidb.php:8
+Stack trace:
+#0 /home/siputlai/public_html/includes/koneksidb.php(8): mysqli->__construct()
+#1 /home/siputlai/public_html/tingkat/presensi_santri.php(3): include('/home/siputlai/...')
+#2 {main}
+  thrown in /home/siputlai/public_html/includes/koneksidb.php on line 8
+[03-Sep-2025 07:12:56 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Table 'siputlai_tpa_db.tingkat' doesn't exist in /home/siputlai/public_html/tingkat/add_class.php:23
+Stack trace:
+#0 /home/siputlai/public_html/tingkat/add_class.php(23): mysqli_query()
+#1 {main}
+  thrown in /home/siputlai/public_html/tingkat/add_class.php on line 23

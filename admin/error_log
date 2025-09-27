@@ -1,0 +1,31 @@
+[05-Jan-2025 12:54:26 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function exec() in /home/siputlai/public_html/admin/upload_galeri.php:16
+Stack trace:
+#0 /home/siputlai/public_html/admin/upload_galeri.php(54): buatThumbnailVideo()
+#1 {main}
+  thrown in /home/siputlai/public_html/admin/upload_galeri.php on line 16
+[05-Jan-2025 12:57:17 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function exec() in /home/siputlai/public_html/admin/upload_galeri.php:16
+Stack trace:
+#0 /home/siputlai/public_html/admin/upload_galeri.php(54): buatThumbnailVideo()
+#1 {main}
+  thrown in /home/siputlai/public_html/admin/upload_galeri.php on line 16
+[27-Aug-2025 05:50:56 UTC] PHP Warning:  include(../includes/db_connection.php): Failed to open stream: No such file or directory in /home/siputlai/public_html/admin/delete_user.php on line 3
+[27-Aug-2025 05:50:56 UTC] PHP Warning:  include(): Failed opening '../includes/db_connection.php' for inclusion (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/siputlai/public_html/admin/delete_user.php on line 3
+[27-Aug-2025 05:50:56 UTC] PHP Warning:  Undefined variable $conn in /home/siputlai/public_html/admin/delete_user.php on line 21
+[27-Aug-2025 05:50:56 UTC] PHP Fatal error:  Uncaught TypeError: mysqli_prepare(): Argument #1 ($mysql) must be of type mysqli, null given in /home/siputlai/public_html/admin/delete_user.php:21
+Stack trace:
+#0 /home/siputlai/public_html/admin/delete_user.php(21): mysqli_prepare()
+#1 {main}
+  thrown in /home/siputlai/public_html/admin/delete_user.php on line 21
+[27-Aug-2025 05:51:01 UTC] PHP Warning:  include(../includes/db_connection.php): Failed to open stream: No such file or directory in /home/siputlai/public_html/admin/delete_user.php on line 3
+[27-Aug-2025 05:51:01 UTC] PHP Warning:  include(): Failed opening '../includes/db_connection.php' for inclusion (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/siputlai/public_html/admin/delete_user.php on line 3
+[27-Aug-2025 05:51:01 UTC] PHP Warning:  Undefined variable $conn in /home/siputlai/public_html/admin/delete_user.php on line 21
+[27-Aug-2025 05:51:01 UTC] PHP Fatal error:  Uncaught TypeError: mysqli_prepare(): Argument #1 ($mysql) must be of type mysqli, null given in /home/siputlai/public_html/admin/delete_user.php:21
+Stack trace:
+#0 /home/siputlai/public_html/admin/delete_user.php(21): mysqli_prepare()
+#1 {main}
+  thrown in /home/siputlai/public_html/admin/delete_user.php on line 21
+[03-Sep-2025 06:18:11 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function imagecreatefrompng() in /home/siputlai/public_html/admin/upload_galeri.php:21
+Stack trace:
+#0 /home/siputlai/public_html/admin/upload_galeri.php(94): buatThumbnailGambar()
+#1 {main}
+  thrown in /home/siputlai/public_html/admin/upload_galeri.php on line 21
