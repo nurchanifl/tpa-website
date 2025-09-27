@@ -1,11 +1,8 @@
 <?php
-$servername = "localhost";
-$username = "siputlai_tpa";
-$password = "nabilahjkt48";
-$dbname = "siputlai_tpa_db";
+include '../config.php';  // Include config
 
-// Membuat koneksi
-$conn = new mysqli($servername, $username, $password, $dbname);
+// Membuat koneksi menggunakan config
+$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
 
 // Memeriksa koneksi
 if ($conn->connect_error) {
