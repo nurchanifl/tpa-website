@@ -1,8 +1,10 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "tpa_db"; // Ganti dengan nama database Anda jika berbeda
+include_once __DIR__ . '/../config.php';
+
+$servername = $db_host;
+$username = $db_user;
+$password = $db_pass;
+$dbname = $db_name;
 
 // Membuat koneksi
 $conn = new mysqli($servername, $username, $password, $dbname);
