@@ -8,8 +8,8 @@ if ($_SERVER['HTTP_HOST'] == 'localhost') {
 } else {
     $base_url = 'https://siputlaili.my.id';
     $db_host = 'localhost';
-    $db_user = 'siputlai';
+    $db_user = 'siputlai_tpa';
     $db_pass = 'nabilahjkt48';
-    $db_name = 'siputlai_tpa';
+    $db_name = 'siputlai_tpa_db';
 }
 ?>
