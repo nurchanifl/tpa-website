@@ -1,7 +1,13 @@
 <?php
 session_start();
 include('includes/koneksidb.php');
-include ('includes/navbar.php'); 
+include ('includes/navbar.php');
+
+// Debugging: Cek apakah data POST diterima
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    var_dump($_POST); // Tambahkan ini untuk debug
+    exit; // Hentikan eksekusi sementara
+}
 
 // Logika login
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
