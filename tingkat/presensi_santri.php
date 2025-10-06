@@ -143,15 +143,44 @@ if (isset($_POST['simpan_presensi'])) {
                         <td><?= $index + 1 ?></td>
                         <td><?= htmlspecialchars($santri['nama_santri']) ?></td>
                         <td>
-                            <select name="status[<?= $santri['id'] ?>]" class="form-select">
-                                <option value="Hadir">Hadir</option>
-                                <option value="Izin">Izin</option>
-                                <option value="Sakit">Sakit</option>
-                                <option value="Alpha">Alpha</option>
-                            </select>
+                        <select name="status[<?= $santri['id'] ?>]" class="form-select">
+                            <?php
+                            // Ambil status presensi yang sudah ada untuk tanggal dan santri ini
+                            $sql_presensi = "SELECT status FROM presensi WHERE id_santri = ? AND tanggal = ?";
+                            $stmt_presensi = mysqli_prepare($conn, $sql_presensi);
+                            mysqli_stmt_bind_param($stmt_presensi, 'is', $santri['id'], $_POST['tanggal']);
+                            mysqli_stmt_execute($stmt_presensi);
+                            $result_presensi = mysqli_stmt_get_result($stmt_presensi);
+                            $existing_status = null;
+                            if ($row = mysqli_fetch_assoc($result_presensi)) {
+                                $existing_status = $row['status'];
+                            }
+                            mysqli_stmt_close($stmt_presensi);
+
+                            $options = ['Hadir', 'Izin', 'Sakit', 'Alpha'];
+                            foreach ($options as $option) {
+                                $selected = ($existing_status === $option) ? 'selected' : '';
+                                echo "<option value=\"$option\" $selected>$option</option>";
+                            }
+                            ?>
+                        </select>
                         </td>
                         <td>
-                            <input type="text" name="keterangan[<?= $santri['id'] ?>]" class="form-control">
+                        <input type="text" name="keterangan[<?= $santri['id'] ?>]" class="form-control"
+                               value="<?php
+                               // Ambil keterangan presensi yang sudah ada untuk tanggal dan santri ini
+                               $sql_ket = "SELECT keterangan FROM presensi WHERE id_santri = ? AND tanggal = ?";
+                               $stmt_ket = mysqli_prepare($conn, $sql_ket);
+                               mysqli_stmt_bind_param($stmt_ket, 'is', $santri['id'], $_POST['tanggal']);
+                               mysqli_stmt_execute($stmt_ket);
+                               $result_ket = mysqli_stmt_get_result($stmt_ket);
+                               $existing_ket = '';
+                               if ($row_ket = mysqli_fetch_assoc($result_ket)) {
+                                   $existing_ket = htmlspecialchars($row_ket['keterangan']);
+                               }
+                               mysqli_stmt_close($stmt_ket);
+                               echo $existing_ket;
+                               ?>">
                         </td>
                     </tr>
                 <?php } ?>
