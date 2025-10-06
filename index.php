@@ -76,7 +76,7 @@ if (isset($_SESSION['success_message'])): ?>
     </main>
     
 <?php if (isset($_SESSION['id'])): ?>
-    <a href="/tpa-website/page/add_testimoni.php" class="sticky-testimoni">
+    <a href="page/add_testimoni.php" class="sticky-testimoni">
         <i class="fas fa-comment-dots"></i> Berikan Testimoni
     </a>
 <?php endif; ?>
@@ -84,11 +84,6 @@ if (isset($_SESSION['success_message'])): ?>
     <footer>
         <?php include 'includes/footer.php';?>
     </footer>
-    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script>
-    AOS.init();
-</script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
