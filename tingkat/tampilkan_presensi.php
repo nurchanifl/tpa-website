@@ -77,6 +77,10 @@ if (isset($_POST['tampilkan_presensi'])) {
 
             // Menyiapkan total kehadiran per status
             $presensi_data = [];
+            $total_kelas_hadir = 0;
+            $total_kelas_izin = 0;
+            $total_kelas_sakit = 0;
+            $total_kelas_alpha = 0;
             foreach ($presensi_grouped as $santri_id => $santri_presensi) {
                 $presensi_data[$santri_id] = $santri_presensi;
                 $presensi_data[$santri_id]['total_hadir'] = 0;
@@ -89,12 +93,16 @@ if (isset($_POST['tampilkan_presensi'])) {
                     $status = $santri_presensi['presensi'][$day] ?? null; // Jangan langsung default ke 'Alpha'
                     if ($status === 'Hadir') {
                         $presensi_data[$santri_id]['total_hadir']++;
+                        $total_kelas_hadir++;
                     } elseif ($status === 'Izin') {
                         $presensi_data[$santri_id]['total_izin']++;
+                        $total_kelas_izin++;
                     } elseif ($status === 'Sakit') {
                         $presensi_data[$santri_id]['total_sakit']++;
+                        $total_kelas_sakit++;
                     } elseif ($status === 'Alpha') { // Hanya hitung jika memang Alpha
                         $presensi_data[$santri_id]['total_alpha']++;
+                        $total_kelas_alpha++;
                     }
                 }
 
@@ -117,8 +125,21 @@ if (isset($_POST['tampilkan_presensi'])) {
             $result_presensi = mysqli_stmt_get_result($stmt_presensi);
 
             $presensi_data = [];
+            $total_santri_hadir = 0;
+            $total_santri_izin = 0;
+            $total_santri_sakit = 0;
+            $total_santri_alpha = 0;
             while ($row = mysqli_fetch_assoc($result_presensi)) {
                 $presensi_data[] = $row;
+                if ($row['status'] === 'Hadir') {
+                    $total_santri_hadir++;
+                } elseif ($row['status'] === 'Izin') {
+                    $total_santri_izin++;
+                } elseif ($row['status'] === 'Sakit') {
+                    $total_santri_sakit++;
+                } elseif ($row['status'] === 'Alpha') {
+                    $total_santri_alpha++;
+                }
             }
             mysqli_stmt_close($stmt_presensi);
         }
@@ -173,6 +194,25 @@ if (isset($_POST['tampilkan_presensi'])) {
         table th, table td {
             text-align: center; /* Teks dalam tabel center */
             vertical-align: middle;
+        }
+        .sticky-column {
+            position: sticky;
+            left: 0;
+            background: white !important;
+            z-index: 10;
+            border-right: 1px solid #dee2e6;
+            box-shadow: 0 0 0 20px white;
+        }
+        .sticky-column-second {
+            position: sticky;
+            left: 40px; /* Adjust based on first column width */
+            background: white !important;
+            z-index: 10;
+            border-right: 1px solid #dee2e6;
+            box-shadow: 0 0 0 20px white;
+        }
+        .table-responsive {
+            overflow-x: auto;
         }
     </style>
 </head>
@@ -265,8 +305,8 @@ if (isset($_POST['tampilkan_presensi'])) {
             <?php if (($mode ?? 'per_kelas') == 'per_kelas') { ?>
             <thead>
             <tr>
-                <th rowspan="2">No</th>
-                <th rowspan="2">Nama Santri</th>
+                <th rowspan="2" class="sticky-column">No</th>
+                <th rowspan="2" class="sticky-column-second">Nama Santri</th>
                 <th colspan="<?= date('t', strtotime($first_day_of_month)) ?>">Tanggal</th>
                 <th rowspan="2">Total Hadir</th>
                 <th rowspan="2">Total Izin</th>
@@ -282,8 +322,8 @@ if (isset($_POST['tampilkan_presensi'])) {
             <tbody>
             <?php $no = 1; foreach ($presensi_data as $santri) { ?>
     <tr>
-        <td><?= $no++ ?></td>
-        <td><?= htmlspecialchars($santri['nama_santri']) ?></td>
+        <td class="sticky-column"><?= $no++ ?></td>
+        <td class="sticky-column-second"><?= htmlspecialchars($santri['nama_santri']) ?></td>
         <?php for ($day = 1; $day <= date('t', strtotime($first_day_of_month)); $day++) {
             $status = $santri['presensi'][$day] ?? '&nbsp;'; // Default kosong
         ?>
@@ -328,6 +368,44 @@ if (isset($_POST['tampilkan_presensi'])) {
             <button type="submit" class="btn btn-info w-100">Unduh ke PDF</button>
         </form>
         <?php } elseif (($mode ?? 'per_kelas') == 'per_santri') { ?>
+        <!-- Ringkasan Kehadiran Santri -->
+        <div class="mt-3">
+            <h5>Ringkasan Kehadiran Santri</h5>
+            <div class="row justify-content-center">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Hadir</h6>
+                            <p class="card-text display-4 text-success"><?= $total_santri_hadir ?></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Izin</h6>
+                            <p class="card-text display-4 text-warning"><?= $total_santri_izin ?></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Sakit</h6>
+                            <p class="card-text display-4 text-info"><?= $total_santri_sakit ?></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Alpha</h6>
+                            <p class="card-text display-4 text-danger"><?= $total_santri_alpha ?></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Form untuk unduh PDF per santri -->
         <form method="POST" action="download_presensi_pdf.php" target="_blank" class="mt-3">
             <input type="hidden" name="mode" value="per_santri">
@@ -345,6 +423,22 @@ if (isset($_POST['tampilkan_presensi'])) {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // Adjust sticky column positions
+    function adjustStickyColumns() {
+        const firstSticky = document.querySelector('.sticky-column');
+        if (firstSticky) {
+            const width = firstSticky.offsetWidth;
+            const secondStickies = document.querySelectorAll('.sticky-column-second');
+            secondStickies.forEach(el => {
+                el.style.left = width + 'px';
+            });
+        }
+    }
+
+    // Run on load and resize
+    window.addEventListener('load', adjustStickyColumns);
+    window.addEventListener('resize', adjustStickyColumns);
+
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('../sw.js')
             .then(function(registration) {

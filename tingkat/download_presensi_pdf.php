@@ -56,6 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result_presensi = mysqli_stmt_get_result($stmt_presensi);
 
         $presensi_grouped = [];
+        $total_kelas_hadir = 0;
+        $total_kelas_izin = 0;
+        $total_kelas_sakit = 0;
+        $total_kelas_alpha = 0;
         while ($row = mysqli_fetch_assoc($result_presensi)) {
             $presensi_grouped[$row['id_santri']]['nama_santri'] = $row['nama_santri'];
             $presensi_grouped[$row['id_santri']]['presensi'][$row['day']] = $row['status'];
@@ -79,8 +83,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result_presensi = mysqli_stmt_get_result($stmt_presensi);
 
         $presensi_data = [];
+        $total_santri_hadir = 0;
+        $total_santri_izin = 0;
+        $total_santri_sakit = 0;
+        $total_santri_alpha = 0;
         while ($row = mysqli_fetch_assoc($result_presensi)) {
             $presensi_data[] = $row;
+            if ($row['status'] === 'Hadir') {
+                $total_santri_hadir++;
+            } elseif ($row['status'] === 'Izin') {
+                $total_santri_izin++;
+            } elseif ($row['status'] === 'Sakit') {
+                $total_santri_sakit++;
+            } elseif ($row['status'] === 'Alpha') {
+                $total_santri_alpha++;
+            }
         }
         mysqli_stmt_close($stmt_presensi);
 
@@ -144,15 +161,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($status == 'Hadir') {
                     $short_status = 'H';
                     $total_hadir++;
+                    $total_kelas_hadir++;
                 } elseif ($status == 'Izin') {
                     $short_status = 'I';
                     $total_izin++;
+                    $total_kelas_izin++;
                 } elseif ($status == 'Sakit') {
                     $short_status = 'S';
                     $total_sakit++;
+                    $total_kelas_sakit++;
                 } elseif ($status == 'Alpha') {
                     $short_status = 'A';
                     $total_alpha++;
+                    $total_kelas_alpha++;
                 }
 
                 $pdf->Cell(5, 7, $short_status, 1, 0, 'C');
@@ -180,6 +201,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdf->Cell(25, 7, $presensi['status'], 1, 0, 'C');
             $pdf->Cell(100, 7, $presensi['keterangan'] ?? '-', 1, 1, 'L');
         }
+
+        // Ringkasan Kehadiran Santri
+        $pdf->Ln(10);
+        $pdf->SetFont('Arial', 'B', 12);
+        $pdf->Cell(0, 10, 'Ringkasan Kehadiran Santri', 0, 1, 'C');
+        $pdf->SetFont('Arial', '', 10);
+        $pdf->Cell(30, 7, 'Total Hadir:', 0, 0, 'L');
+        $pdf->Cell(15, 7, $total_santri_hadir, 0, 0, 'L');
+        $pdf->Cell(30, 7, 'Total Izin:', 0, 0, 'L');
+        $pdf->Cell(15, 7, $total_santri_izin, 0, 0, 'L');
+        $pdf->Cell(30, 7, 'Total Sakit:', 0, 0, 'L');
+        $pdf->Cell(15, 7, $total_santri_sakit, 0, 0, 'L');
+        $pdf->Cell(30, 7, 'Total Alpha:', 0, 0, 'L');
+        $pdf->Cell(15, 7, $total_santri_alpha, 0, 1, 'L');
     }
 
     // Menambahkan nama pengguna di bawah tabel
@@ -187,7 +222,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pdf->SetFont('Arial', 'I', 10);
     $pdf->Cell(0, 10, 'Wali Kelas: ' . $username, 0, 1, 'L'); // Nama user di bawah tabel
 
-    $pdf->Output('I', 'laporan_presensi.pdf');
+    // Generate dynamic filename
+    $bulan_nama = DateTime::createFromFormat('!m', $bulan_filter)->format('F');
+    if ($mode == 'per_kelas') {
+        $filename = 'Laporan_Presensi_' . str_replace(' ', '_', $unit_nama) . '_' . str_replace(' ', '_', $kelas_nama) . '_' . $bulan_nama . '_' . $tahun_filter . '.pdf';
+    } elseif ($mode == 'per_santri') {
+        $filename = 'Laporan_Presensi_' . str_replace(' ', '_', $santri_nama) . '_' . $bulan_nama . '_' . $tahun_filter . '.pdf';
+    }
+
+    $pdf->Output('D', $filename);
     exit;
 } else {
     die('Metode tidak valid.');
