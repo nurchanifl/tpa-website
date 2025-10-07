@@ -75,6 +75,7 @@ function tampilkan_rating($rating) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Testimoni</title>
+    <link rel="manifest" href="../manifest.json">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 </head>
@@ -158,5 +159,16 @@ function tampilkan_rating($rating) {
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
     </style>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('../sw.js')
+                .then(function(registration) {
+                    console.log('Service Worker registered successfully:', registration);
+                })
+                .catch(function(error) {
+                    console.log('Service Worker registration failed:', error);
+                });
+        }
+    </script>
 </body>
 </html>
