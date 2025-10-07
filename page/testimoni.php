@@ -1,11 +1,13 @@
 <?php
-include('../includes/koneksidb.php'); 
+session_start();
+include('../includes/koneksidb.php');
+include('../includes/navbar.php');
 
 // Ambil data rating dan testimoni dari form
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_pengguna = mysqli_real_escape_string($conn, $_POST['nama_pengguna']);
     $rating = mysqli_real_escape_string($conn, $_POST['rating']);
-    
+
     // Ambil input dari form dan ganti newline
     $testimoni = str_replace(array("\r\n", "\r"), "\n", $_POST['testimoni']);
 
@@ -13,15 +15,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $testimoni = mysqli_real_escape_string($conn, $testimoni);
 
     // Simpan ke dalam database
-    $sql = "INSERT INTO rating_testimoni (nama_pengguna, rating, testimoni, tanggal) 
+    $sql = "INSERT INTO rating_testimoni (nama_pengguna, rating, testimoni, tanggal)
             VALUES (?, ?, ?, NOW())";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, 'sis', $nama_pengguna, $rating, $testimoni);
 
     if (mysqli_stmt_execute($stmt)) {
-        echo "Testimoni berhasil disimpan!";
+        $success_message = "Terima kasih atas testimoni Anda!";
     } else {
-        echo "Gagal menyimpan testimoni: " . mysqli_error($conn);
+        $error_message = "Gagal menyimpan testimoni: " . mysqli_error($conn);
     }
 
     mysqli_stmt_close($stmt);
@@ -78,29 +80,83 @@ function tampilkan_rating($rating) {
 </head>
 <body>
     <div class="container mt-5">
-        <h1>Testimoni Pengguna</h1>
-        <h2>Rata-rata Rating: <?= $rata_rata_rating ?>/5</h2>
+        <h1 class="text-center mb-4">Testimoni Pengguna</h1>
+        <div class="text-center mb-5">
+            <h3>Rata-rata Rating: <span class="badge bg-warning text-dark fs-5"><?= $rata_rata_rating ?>/5</span></h3>
+            <div class="mb-4">
+                <?php for ($i = 1; $i <= 5; $i++): ?>
+                    <span class="bi bi-star<?= $i <= round($rata_rata_rating) ? '-fill' : '' ?> text-warning fs-4"></span>
+                <?php endfor; ?>
+            </div>
+        </div>
 
-        
+        <!-- Form untuk beri testimoni -->
+        <div class="card shadow mb-5">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-pencil-square"></i> Berikan Testimoni Anda</h5>
+            </div>
+            <div class="card-body">
+                <?php if (isset($success_message)): ?>
+                    <div class="alert alert-success"><?= $success_message ?></div>
+                <?php endif; ?>
+                <?php if (isset($error_message)): ?>
+                    <div class="alert alert-danger"><?= $error_message ?></div>
+                <?php endif; ?>
+                <form method="POST" action="">
+                    <div class="mb-3">
+                        <label for="nama_pengguna" class="form-label">Nama Anda</label>
+                        <input type="text" class="form-control" id="nama_pengguna" name="nama_pengguna" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rating" class="form-label">Rating</label>
+                        <select id="rating" name="rating" class="form-select" required>
+                            <option value="">Pilih Rating</option>
+                            <option value="5">5 - Sangat Baik</option>
+                            <option value="4">4 - Baik</option>
+                            <option value="3">3 - Cukup</option>
+                            <option value="2">2 - Buruk</option>
+                            <option value="1">1 - Sangat Buruk</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="testimoni" class="form-label">Testimoni</label>
+                        <textarea class="form-control" id="testimoni" name="testimoni" rows="4" placeholder="Tulis testimoni Anda di sini..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i> Kirim Testimoni</button>
+                </form>
+            </div>
+        </div>
 
+        <h2 class="mb-4">Testimoni Terbaru</h2>
         <?php
         // Menampilkan data testimoni
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
-                echo '<div class="card mb-3">';
+                echo '<div class="card mb-3 shadow-sm testimonial-card">';
                 echo '<div class="card-body">';
-                echo '<h5 class="card-title">' . htmlspecialchars($row['nama_pengguna']) . '</h5>';
-                echo '<p class="card-text"><strong>Rating:</strong> ' . tampilkan_rating($row['rating']) . '</p>';  // Menampilkan bintang
-                // Mengganti newline dengan <br> saat menampilkan testimoni
+                echo '<div class="d-flex align-items-center mb-2">';
+                echo '<h5 class="card-title me-3">' . htmlspecialchars($row['nama_pengguna']) . '</h5>';
+                echo '<div>' . tampilkan_rating($row['rating']) . '</div>';
+                echo '</div>';
                 echo '<p class="card-text">' . nl2br(htmlspecialchars($row['testimoni'])) . '</p>';
-                echo '<p class="card-text"><small class="text-muted">Dikirim pada ' . date('d F Y', strtotime($row['tanggal'])) . '</small></p>';
+                echo '<p class="card-text"><small class="text-muted"><i class="bi bi-calendar"></i> ' . date('d F Y', strtotime($row['tanggal'])) . '</small></p>';
                 echo '</div>';
                 echo '</div>';
             }
         } else {
-            echo '<p>Belum ada testimoni.</p>';
+            echo '<div class="alert alert-info">Belum ada testimoni. Jadilah yang pertama!</div>';
         }
         ?>
     </div>
+
+    <style>
+        .testimonial-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+    </style>
 </body>
 </html>

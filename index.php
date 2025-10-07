@@ -75,11 +75,9 @@ if (isset($_SESSION['success_message'])): ?>
         </div>
     </main>
     
-<?php if (isset($_SESSION['id'])): ?>
-    <a href="page/add_testimoni.php" class="sticky-testimoni">
-        <i class="fas fa-comment-dots"></i> Berikan Testimoni
+    <a href="page/testimoni.php" class="sticky-testimoni">
+        <i class="fas fa-comment-dots"></i> Lihat Testimoni
     </a>
-<?php endif; ?>
 
     <footer>
         <?php include 'includes/footer.php';?>
