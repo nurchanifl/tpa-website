@@ -140,8 +140,8 @@ if (isset($_POST['tampilkan_presensi'])) {
 <div class="container mt-5 text-center">
     <!-- Form Pilih Unit, Kelas, Bulan, Tahun -->
     <form method="POST" class="mb-4">
-        <div class="row justify-content-center">
-            <div class="col-md-3">
+        <div class="row g-3 justify-content-center">
+            <div class="col-12 col-md-3">
                 <label for="unit" class="form-label">Pilih Unit</label>
                 <select name="id_unit" id="unit" class="form-select" onchange="this.form.submit()" required>
                     <option value="">-- Pilih Unit --</option>
@@ -152,7 +152,7 @@ if (isset($_POST['tampilkan_presensi'])) {
                     <?php } ?>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-12 col-md-3">
                 <label for="kelas" class="form-label">Pilih Kelas</label>
                 <select name="id_kelas" id="kelas" class="form-select" onchange="this.form.submit()" required>
                     <option value="">-- Pilih Kelas --</option>
@@ -163,7 +163,7 @@ if (isset($_POST['tampilkan_presensi'])) {
                     <?php } ?>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-12 col-md-3">
                 <label for="bulan" class="form-label">Pilih Bulan</label>
                 <select name="bulan_filter" id="bulan" class="form-select" required>
                     <?php for ($i = 1; $i <= 12; $i++) { ?>
@@ -173,12 +173,12 @@ if (isset($_POST['tampilkan_presensi'])) {
                     <?php } ?>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-12 col-md-3">
                 <label for="tahun" class="form-label">Pilih Tahun</label>
                 <input type="number" name="tahun_filter" id="tahun" class="form-control" value="<?= htmlspecialchars($tahun_filter) ?>" required>
             </div>
         </div>
-        <button type="submit" name="tampilkan_presensi" class="btn btn-primary mt-3">Tampilkan Presensi</button>
+        <button type="submit" name="tampilkan_presensi" class="btn btn-primary mt-3 w-100">Tampilkan Presensi</button>
     </form>
 
     <!-- Tampilkan laporan presensi di bawah tombol -->
@@ -191,7 +191,8 @@ if (isset($_POST['tampilkan_presensi'])) {
 
     <!-- Tabel Presensi -->
     <?php if (!empty($presensi_data)) { ?>
-        <table class="table table-bordered table-striped mx-auto" style="max-width: 1000px;">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped mx-auto">
             <thead>
             <tr>
                 <th rowspan="2">No</th>
@@ -226,7 +227,8 @@ if (isset($_POST['tampilkan_presensi'])) {
 <?php } ?>
             </tbody>
         </table>
-                <!-- Form untuk unduh PDF -->
+        </div>
+        <!-- Form untuk unduh PDF -->
 <form method="POST" action="download_presensi_pdf.php" target="_blank">
     <input type="hidden" name="id_unit" value="<?= htmlspecialchars($id_unit) ?>">
     <input type="hidden" name="id_kelas" value="<?= htmlspecialchars($id_kelas) ?>">
