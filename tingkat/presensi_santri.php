@@ -91,12 +91,12 @@ if (isset($_POST['simpan_presensi'])) {
 
     <!-- Form Pilih Unit, Kelas, dan Tanggal -->
     <form method="POST" class="mb-4">
-        <div class="row">
-        <div class="col-md-4">
+        <div class="row g-3">
+            <div class="col-12 col-md-4">
                 <label for="tanggal" class="form-label">Tanggal</label>
                 <input type="date" name="tanggal" id="tanggal" class="form-control" value="<?= htmlspecialchars($_POST['tanggal'] ?? '') ?>" required>
             </div>
-            <div class="col-md-4">
+            <div class="col-12 col-md-4">
                 <label for="unit" class="form-label">Pilih Unit</label>
                 <select name="id_unit" id="unit" class="form-select" onchange="this.form.submit()" required>
                     <option value="">-- Pilih Unit --</option>
@@ -107,7 +107,7 @@ if (isset($_POST['simpan_presensi'])) {
                     <?php } ?>
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-12 col-md-4">
                 <label for="kelas" class="form-label">Pilih Kelas</label>
                 <select name="id_kelas" id="kelas" class="form-select" onchange="this.form.submit()" required>
                     <option value="">-- Pilih Kelas --</option>
@@ -118,7 +118,6 @@ if (isset($_POST['simpan_presensi'])) {
                     <?php } ?>
                 </select>
             </div>
-           
         </div>
     </form>
 
@@ -128,7 +127,8 @@ if (isset($_POST['simpan_presensi'])) {
             <input type="hidden" name="id_unit" value="<?= htmlspecialchars($_POST['id_unit']) ?>">
             <input type="hidden" name="id_kelas" value="<?= htmlspecialchars($_POST['id_kelas']) ?>">
             <input type="hidden" name="tanggal" value="<?= htmlspecialchars($_POST['tanggal']) ?>">
-            <table class="table table-bordered">
+            <div class="table-responsive">
+                <table class="table table-bordered">
                 <thead>
                 <tr>
                     <th>No</th>
@@ -185,8 +185,9 @@ if (isset($_POST['simpan_presensi'])) {
                     </tr>
                 <?php } ?>
                 </tbody>
-            </table>
-            <button type="submit" name="simpan_presensi" class="btn btn-success">Simpan Presensi</button>
+                </table>
+            </div>
+            <button type="submit" name="simpan_presensi" class="btn btn-success w-100 mt-3">Simpan Presensi</button>
         </form>
     <?php } ?>
 </div>
