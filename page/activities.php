@@ -1,7 +1,7 @@
-<?php 
+<?php
 session_start();
 include('../includes/koneksidb.php');
-include ('../includes/navbar.php'); 
+include('../includes/navbar.php');
 ?>
 
 <!DOCTYPE html>
@@ -13,12 +13,20 @@ include ('../includes/navbar.php');
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../assets/css/style.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <style>
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+    </style>
 </head>
 <body>
     <main class="container py-5">
         <section>
-            <h2 class="text-center mb-4" data-aos="fade-down">Daftar Kegiatan</h2>
+            <h2 class="text-center mb-4">Daftar Kegiatan</h2>
             <div class="row g-4">
                 <?php
                 $sql = "SELECT * FROM kegiatan";
@@ -27,8 +35,8 @@ include ('../includes/navbar.php');
                 if (mysqli_num_rows($result) > 0) {
                     while ($row = mysqli_fetch_assoc($result)) {
                         ?>
-                        <div class="col-md-6 col-lg-4" data-aos="fade-up">
-                            <div class="card h-100 shadow">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 shadow card-hover">
                                 <div class="card-body">
                                     <h5 class="card-title"><?= htmlspecialchars($row['nama_kegiatan']) ?></h5>
                                     <p class="card-text"><?= nl2br(htmlspecialchars($row['deskripsi'])) ?></p>
@@ -49,13 +57,5 @@ include ('../includes/navbar.php');
         <?php include '../includes/footer.php'; ?>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-    <script>
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true,
-        });
-    </script>
 </body>
 </html>

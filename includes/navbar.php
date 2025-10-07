@@ -35,7 +35,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <i class="fas fa-bullhorn"></i> Pengumuman
                     </a>
                 </li>
-                
+                <li class="nav-item">
+                    <a class="nav-link <?= $current_page === 'contact.php' ? 'active' : '' ?>" href="<?php echo $base_url; ?>/page/contact.php">
+                        <i class="fas fa-envelope"></i> Kontak
+                    </a>
+                </li>
+
                 <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                     <li class="nav-item">
                         <a class="nav-link <?= $current_page === 'dashboard.php' ? 'active' : '' ?>" href="<?php echo $base_url; ?>/admin/dashboard.php">

@@ -1,5 +1,6 @@
-<?php 
-include ('../includes/navbar.php'); 
+<?php
+session_start();
+include('../includes/navbar.php');
 include('../includes/koneksidb.php');
 ?>
 
@@ -9,37 +10,48 @@ include('../includes/koneksidb.php');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pengumuman</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/css/style.css" rel="stylesheet">
+    <style>
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+    </style>
 </head>
 <body>
-    <header class="bg-primary text-white py-3">
-        <div class="container">
-            <h1 class="text-center">Pengumuman</h1>
-        </div>
-    </header>
     <main class="container py-5">
-        <h2 class="mb-4">Daftar Pengumuman</h2>
-        <?php
-        $sql = "SELECT * FROM pengumuman ORDER BY tanggal_dibuat DESC";
-        $result = mysqli_query($conn, $sql);
+        <h2 class="text-center mb-4">Daftar Pengumuman</h2>
+        <div class="row">
+            <?php
+            $sql = "SELECT * FROM pengumuman ORDER BY tanggal_dibuat DESC";
+            $result = mysqli_query($conn, $sql);
 
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                echo '<div class="card mb-4">';
-                echo '<div class="card-body">';
-                echo '<h5 class="card-title">' . $row['judul'] . '</h5>';
-                echo '<p class="card-text">' . $row['isi'] . '</p>';
-                echo '<p class="text-muted">' . $row['tanggal_dibuat'] . '</p>';
-                echo '</div>';
-                echo '</div>';
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    echo '<div class="col-md-6 mb-4">';
+                    echo '<div class="card h-100 shadow card-hover">';
+                    echo '<div class="card-body">';
+                    echo '<h5 class="card-title">' . htmlspecialchars($row['judul']) . '</h5>';
+                    echo '<p class="card-text">' . nl2br(htmlspecialchars($row['isi'])) . '</p>';
+                    echo '<small class="text-muted"><i class="fas fa-calendar-alt me-1"></i>' . htmlspecialchars($row['tanggal_dibuat']) . '</small>';
+                    echo '</div>';
+                    echo '</div>';
+                    echo '</div>';
+                }
+            } else {
+                echo '<div class="col-12"><p class="text-center alert alert-info">Belum ada pengumuman.</p></div>';
             }
-        } else {
-            echo '<p class="text-center">Belum ada pengumuman.</p>';
-        }
-        ?>
+            ?>
+        </div>
     </main>
-    <footer class="bg-primary text-white text-center py-3">
-        <p>© 2024 TPA - Semua Hak Dilindungi</p>
+    <footer class="mt-5">
+        <?php include '../includes/footer.php'; ?>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
