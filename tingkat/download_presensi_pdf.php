@@ -225,9 +225,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Generate dynamic filename
     $bulan_nama = DateTime::createFromFormat('!m', $bulan_filter)->format('F');
     if ($mode == 'per_kelas') {
-        $filename = 'Laporan_Presensi_' . str_replace(' ', '_', $unit_nama) . '_' . str_replace(' ', '_', $kelas_nama) . '_' . $bulan_nama . '_' . $tahun_filter . '.pdf';
+        $filename = 'Laporan Presensi ' . $unit_nama . ' ' . $kelas_nama . ' ' . $bulan_nama . ' ' . $tahun_filter . '.pdf';
     } elseif ($mode == 'per_santri') {
-        $filename = 'Laporan_Presensi_' . str_replace(' ', '_', $santri_nama) . '_' . $bulan_nama . '_' . $tahun_filter . '.pdf';
+        $filename = 'Laporan Presensi ' . $santri_nama . ' ' . $bulan_nama . ' ' . $tahun_filter . '.pdf';
     }
 
     $pdf->Output('D', $filename);
