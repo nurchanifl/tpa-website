@@ -42,7 +42,8 @@ if (!$result) {
     </header>
     <main class="container py-5">
         <h2>Daftar Pengguna</h2>
-        <table class="table table-bordered">
+        <div class="table-responsive">
+            <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -67,7 +68,8 @@ if (!$result) {
                 }
                 ?>
             </tbody>
-        </table>
+            </table>
+        </div>
 
         <!-- Tombol untuk menambah pengguna -->
         <a href="tambah_user.php" class="btn btn-primary mt-3">Tambah Pengguna</a>

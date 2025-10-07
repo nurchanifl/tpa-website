@@ -194,6 +194,14 @@ footer {
         padding: 20px 5%;
     }
 
+    section {
+        padding: 15px;
+    }
+
+    .card {
+        margin-bottom: 15px;
+    }
+
     table {
         font-size: 0.9em;
     }
@@ -205,6 +213,15 @@ footer {
     .hero {
         height: 50vh;
         padding: 20px;
+        text-align: center;
+    }
+
+    .hero h1 {
+        font-size: 2em;
+    }
+
+    .hero p {
+        font-size: 1.1em;
     }
 
     .sticky-testimoni {
@@ -212,6 +229,48 @@ footer {
         right: 15px;
         padding: 10px 15px;
         font-size: 14px;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .form-control {
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero h1 {
+        font-size: 1.8em;
+    }
+
+    .hero p {
+        font-size: 1em;
+    }
+
+    .card-title {
+        font-size: 1.2em;
+    }
+
+    .card-text {
+        font-size: 0.9em;
+    }
+
+    table {
+        font-size: 0.8em;
+    }
+
+    table th, table td {
+        padding: 6px;
+    }
+
+    .sticky-testimoni {
+        bottom: 10px;
+        right: 10px;
+        padding: 8px 12px;
+        font-size: 12px;
     }
 }
 
