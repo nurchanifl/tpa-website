@@ -217,7 +217,7 @@ if (isset($_POST['tampilkan_presensi'])) {
     </style>
 </head>
 <body>
-<div class="container mt-5 text-center">
+<div class="container-fluid mt-5 text-center">
     <!-- Form Pilih Mode, Unit, Kelas, Santri (jika per santri), Bulan, Tahun -->
     <form method="POST" class="mb-4">
         <div class="row g-3 justify-content-center mb-3">
@@ -301,7 +301,7 @@ if (isset($_POST['tampilkan_presensi'])) {
     <!-- Tabel Presensi -->
     <?php if (!empty($presensi_data)) { ?>
         <div class="table-responsive">
-            <table class="table table-bordered table-striped mx-auto">
+            <table class="table table-bordered table-striped w-100">
             <?php if (($mode ?? 'per_kelas') == 'per_kelas') { ?>
             <thead>
             <tr>

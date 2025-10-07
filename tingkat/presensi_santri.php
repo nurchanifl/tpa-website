@@ -83,7 +83,7 @@ if (isset($_POST['simpan_presensi'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="container mt-5">
+<div class="container-fluid mt-5">
     <h2>Presensi Santri Per Kelas</h2>
 
     <?php if (isset($_GET['success']) && $_GET['success'] === 'true') { ?>
@@ -129,7 +129,7 @@ if (isset($_POST['simpan_presensi'])) {
             <input type="hidden" name="id_kelas" value="<?= htmlspecialchars($_POST['id_kelas']) ?>">
             <input type="hidden" name="tanggal" value="<?= htmlspecialchars($_POST['tanggal']) ?>">
             <div class="table-responsive">
-                <table class="table table-bordered">
+                <table class="table table-bordered w-100">
                 <thead>
                 <tr>
                     <th>No</th>
