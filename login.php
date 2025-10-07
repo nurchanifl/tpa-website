@@ -6,6 +6,7 @@ include('includes/koneksidb.php');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
+    $remember_me = isset($_POST['remember_me']);
 
     $query = $conn->prepare("SELECT id, username, password, role FROM users WHERE username = ?");
     $query->bind_param("s", $username);
@@ -19,6 +20,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['username'] = $username;
             $_SESSION['role'] = $user['role'];
             $_SESSION['success_message'] = "Selamat datang, $username!";
+
+            // Handle remember me
+            if ($remember_me) {
+                $token = bin2hex(random_bytes(32));
+                $expires = date('Y-m-d H:i:s', strtotime('+30 days'));
+                $insert_token = $conn->prepare("INSERT INTO user_tokens (user_id, token, expires_at) VALUES (?, ?, ?)");
+                $insert_token->bind_param("iss", $user['id'], $token, $expires);
+                $insert_token->execute();
+                $insert_token->close();
+
+                setcookie('remember_token', $token, strtotime('+30 days'), '/', '', false, true);
+            }
 
             // Arahkan berdasarkan role
             if ($_SESSION['role'] === 'admin') {
@@ -65,6 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
                 <input type="password" name="password" id="password" class="form-control" required>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" name="remember_me" id="remember_me" class="form-check-input">
+                <label for="remember_me" class="form-check-label">Ingat Saya</label>
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
         </form>
