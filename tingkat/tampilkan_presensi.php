@@ -326,6 +326,17 @@ if (isset($_POST['tampilkan_presensi'])) {
             <input type="hidden" name="tahun_filter" value="<?= htmlspecialchars($tahun_filter) ?>">
             <button type="submit" class="btn btn-info w-100">Unduh ke PDF</button>
         </form>
+        <?php } elseif (($mode ?? 'per_kelas') == 'per_santri') { ?>
+        <!-- Form untuk unduh PDF per santri -->
+        <form method="POST" action="download_presensi_pdf.php" target="_blank" class="mt-3">
+            <input type="hidden" name="mode" value="per_santri">
+            <input type="hidden" name="id_unit" value="<?= htmlspecialchars($id_unit) ?>">
+            <input type="hidden" name="id_kelas" value="<?= htmlspecialchars($id_kelas) ?>">
+            <input type="hidden" name="id_santri" value="<?= htmlspecialchars($id_santri) ?>">
+            <input type="hidden" name="bulan_filter" value="<?= htmlspecialchars($bulan_filter) ?>">
+            <input type="hidden" name="tahun_filter" value="<?= htmlspecialchars($tahun_filter) ?>">
+            <button type="submit" class="btn btn-info w-100">Unduh ke PDF</button>
+        </form>
         <?php } ?>
 
     <?php } ?>

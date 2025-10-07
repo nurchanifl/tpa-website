@@ -8,6 +8,7 @@ $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Unknown User
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $mode = $_POST['mode'] ?? 'per_kelas';
     $id_unit = $_POST['id_unit'] ?? '';
     $id_kelas = $_POST['id_kelas'] ?? '';
     $bulan_filter = $_POST['bulan_filter'] ?? date('m');
@@ -42,26 +43,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $first_day_of_month = "$tahun_filter-$bulan_filter-01";
     $last_day_of_month = date("Y-m-t", strtotime($first_day_of_month));
 
-    $sql_presensi = "SELECT p.*, s.nama_santri, DAY(p.tanggal) as day
-                     FROM presensi p
-                     JOIN santri s ON p.id_santri = s.id
-                     WHERE s.id_kelas = ? AND p.tanggal BETWEEN ? AND ? 
-                     ORDER BY s.id, p.tanggal";
+    if ($mode == 'per_kelas') {
+        $sql_presensi = "SELECT p.*, s.nama_santri, DAY(p.tanggal) as day
+                         FROM presensi p
+                         JOIN santri s ON p.id_santri = s.id
+                         WHERE s.id_kelas = ? AND p.tanggal BETWEEN ? AND ?
+                         ORDER BY s.id, p.tanggal";
 
-    $stmt_presensi = mysqli_prepare($conn, $sql_presensi);
-    mysqli_stmt_bind_param($stmt_presensi, 'iss', $id_kelas, $first_day_of_month, $last_day_of_month);
-    mysqli_stmt_execute($stmt_presensi);
-    $result_presensi = mysqli_stmt_get_result($stmt_presensi);
+        $stmt_presensi = mysqli_prepare($conn, $sql_presensi);
+        mysqli_stmt_bind_param($stmt_presensi, 'iss', $id_kelas, $first_day_of_month, $last_day_of_month);
+        mysqli_stmt_execute($stmt_presensi);
+        $result_presensi = mysqli_stmt_get_result($stmt_presensi);
 
-    $presensi_grouped = [];
-    while ($row = mysqli_fetch_assoc($result_presensi)) {
-        $presensi_grouped[$row['id_santri']]['nama_santri'] = $row['nama_santri'];
-        $presensi_grouped[$row['id_santri']]['presensi'][$row['day']] = $row['status'];
+        $presensi_grouped = [];
+        while ($row = mysqli_fetch_assoc($result_presensi)) {
+            $presensi_grouped[$row['id_santri']]['nama_santri'] = $row['nama_santri'];
+            $presensi_grouped[$row['id_santri']]['presensi'][$row['day']] = $row['status'];
+        }
+        mysqli_stmt_close($stmt_presensi);
+    } elseif ($mode == 'per_santri') {
+        $id_santri = $_POST['id_santri'] ?? '';
+        if (empty($id_santri)) {
+            die('Santri harus dipilih.');
+        }
+
+        $sql_presensi = "SELECT p.*, s.nama_santri, DATE_FORMAT(p.tanggal, '%d-%m-%Y') as tanggal_formatted, p.keterangan
+                         FROM presensi p
+                         JOIN santri s ON p.id_santri = s.id
+                         WHERE p.id_santri = ? AND p.tanggal BETWEEN ? AND ?
+                         ORDER BY p.tanggal";
+
+        $stmt_presensi = mysqli_prepare($conn, $sql_presensi);
+        mysqli_stmt_bind_param($stmt_presensi, 'iss', $id_santri, $first_day_of_month, $last_day_of_month);
+        mysqli_stmt_execute($stmt_presensi);
+        $result_presensi = mysqli_stmt_get_result($stmt_presensi);
+
+        $presensi_data = [];
+        while ($row = mysqli_fetch_assoc($result_presensi)) {
+            $presensi_data[] = $row;
+        }
+        mysqli_stmt_close($stmt_presensi);
+
+        // Ambil nama santri
+        $santri_nama = '';
+        $sql_santri_nama = "SELECT nama_santri FROM santri WHERE id = ?";
+        $stmt_santri_nama = mysqli_prepare($conn, $sql_santri_nama);
+        mysqli_stmt_bind_param($stmt_santri_nama, 'i', $id_santri);
+        mysqli_stmt_execute($stmt_santri_nama);
+        mysqli_stmt_bind_result($stmt_santri_nama, $santri_nama);
+        mysqli_stmt_fetch($stmt_santri_nama);
+        mysqli_stmt_close($stmt_santri_nama);
     }
-    mysqli_stmt_close($stmt_presensi);
 
     // Buat PDF
-    $pdf = new FPDF('L', 'mm', 'A4');
+    $orientation = ($mode == 'per_santri') ? 'P' : 'L'; // Portrait untuk per santri, Landscape untuk per kelas
+    $pdf = new FPDF($orientation, 'mm', 'A4');
     $pdf->SetAutoPageBreak(true, 10);
     $pdf->AddPage();
 
@@ -70,63 +106,86 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pdf->Cell(0, 10, "LAPORAN PRESENSI SANTRI", 0, 1, 'C');
     $pdf->SetFont('Arial', '', 12);
     $pdf->Cell(0, 7, "Unit: $unit_nama | Kelas: $kelas_nama", 0, 1, 'C');
+    if ($mode == 'per_santri') {
+        $pdf->Cell(0, 7, "Santri: $santri_nama", 0, 1, 'C');
+    }
     $pdf->Cell(0, 7, "Bulan: " . DateTime::createFromFormat('!m', $bulan_filter)->format('F') . " $tahun_filter", 0, 1, 'C');
 
-    // Header Tabel
-    $pdf->SetFont('Arial', 'B', 10);
-    $pdf->Cell(10, 10, 'No', 1, 0, 'C');
-    $pdf->Cell(50, 10, 'Nama Santri', 1, 0, 'C');
+    if ($mode == 'per_kelas') {
+        // Header Tabel
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->Cell(10, 10, 'No', 1, 0, 'C');
+        $pdf->Cell(50, 10, 'Nama Santri', 1, 0, 'C');
 
-    // Header Tanggal
-    for ($day = 1; $day <= date('t', strtotime($first_day_of_month)); $day++) {
-        $pdf->Cell(5, 10, $day, 1, 0, 'C');
-    }
-
-    // Header Total
-    $pdf->Cell(15, 10, 'Hadir', 1, 0, 'C');
-    $pdf->Cell(15, 10, 'Izin', 1, 0, 'C');
-    $pdf->Cell(15, 10, 'Sakit', 1, 0, 'C');
-    $pdf->Cell(15, 10, 'Alpha', 1, 1, 'C');
-
-    // Data Presensi
-    $pdf->SetFont('Arial', '', 10);
-    $no = 1;
-    foreach ($presensi_grouped as $santri) {
-        $pdf->Cell(10, 7, $no++, 1, 0, 'C');
-        $pdf->Cell(50, 7, $santri['nama_santri'], 1, 0, 'L');
-
-        $total_hadir = $total_izin = $total_sakit = $total_alpha = 0;
-
+        // Header Tanggal
         for ($day = 1; $day <= date('t', strtotime($first_day_of_month)); $day++) {
-            $status = $santri['presensi'][$day] ?? '';
-            $short_status = '';
-
-            if ($status == 'Hadir') {
-                $short_status = 'H';
-                $total_hadir++;
-            } elseif ($status == 'Izin') {
-                $short_status = 'I';
-                $total_izin++;
-            } elseif ($status == 'Sakit') {
-                $short_status = 'S';
-                $total_sakit++;
-            } elseif ($status == 'Alpha') {
-                $short_status = 'A';
-                $total_alpha++;
-            }
-
-            $pdf->Cell(5, 7, $short_status, 1, 0, 'C');
+            $pdf->Cell(5, 10, $day, 1, 0, 'C');
         }
 
-        $pdf->Cell(15, 7, $total_hadir, 1, 0, 'C');
-        $pdf->Cell(15, 7, $total_izin, 1, 0, 'C');
-        $pdf->Cell(15, 7, $total_sakit, 1, 0, 'C');
-        $pdf->Cell(15, 7, $total_alpha, 1, 1, 'C');
+        // Header Total
+        $pdf->Cell(15, 10, 'Hadir', 1, 0, 'C');
+        $pdf->Cell(15, 10, 'Izin', 1, 0, 'C');
+        $pdf->Cell(15, 10, 'Sakit', 1, 0, 'C');
+        $pdf->Cell(15, 10, 'Alpha', 1, 1, 'C');
+
+        // Data Presensi
+        $pdf->SetFont('Arial', '', 10);
+        $no = 1;
+        foreach ($presensi_grouped as $santri) {
+            $pdf->Cell(10, 7, $no++, 1, 0, 'C');
+            $pdf->Cell(50, 7, $santri['nama_santri'], 1, 0, 'L');
+
+            $total_hadir = $total_izin = $total_sakit = $total_alpha = 0;
+
+            for ($day = 1; $day <= date('t', strtotime($first_day_of_month)); $day++) {
+                $status = $santri['presensi'][$day] ?? '';
+                $short_status = '';
+
+                if ($status == 'Hadir') {
+                    $short_status = 'H';
+                    $total_hadir++;
+                } elseif ($status == 'Izin') {
+                    $short_status = 'I';
+                    $total_izin++;
+                } elseif ($status == 'Sakit') {
+                    $short_status = 'S';
+                    $total_sakit++;
+                } elseif ($status == 'Alpha') {
+                    $short_status = 'A';
+                    $total_alpha++;
+                }
+
+                $pdf->Cell(5, 7, $short_status, 1, 0, 'C');
+            }
+
+            $pdf->Cell(15, 7, $total_hadir, 1, 0, 'C');
+            $pdf->Cell(15, 7, $total_izin, 1, 0, 'C');
+            $pdf->Cell(15, 7, $total_sakit, 1, 0, 'C');
+            $pdf->Cell(15, 7, $total_alpha, 1, 1, 'C');
+        }
+    } elseif ($mode == 'per_santri') {
+        // Header Tabel per Santri
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->Cell(15, 10, 'No', 1, 0, 'C');
+        $pdf->Cell(35, 10, 'Tanggal', 1, 0, 'C');
+        $pdf->Cell(25, 10, 'Status', 1, 0, 'C');
+        $pdf->Cell(100, 10, 'Keterangan', 1, 1, 'C');
+
+        // Data Presensi per Santri
+        $pdf->SetFont('Arial', '', 10);
+        $no = 1;
+        foreach ($presensi_data as $presensi) {
+            $pdf->Cell(15, 7, $no++, 1, 0, 'C');
+            $pdf->Cell(35, 7, $presensi['tanggal_formatted'], 1, 0, 'C');
+            $pdf->Cell(25, 7, $presensi['status'], 1, 0, 'C');
+            $pdf->Cell(100, 7, $presensi['keterangan'] ?? '-', 1, 1, 'L');
+        }
     }
-// Menambahkan nama pengguna di bawah tabel
-$pdf->Ln(5); // Spasi setelah tabel
-$pdf->SetFont('Arial', 'I', 10);
-$pdf->Cell(0, 10, 'Wali Kelas: ' . $username, 0, 1, 'L'); // Nama user di bawah tabel
+
+    // Menambahkan nama pengguna di bawah tabel
+    $pdf->Ln(5); // Spasi setelah tabel
+    $pdf->SetFont('Arial', 'I', 10);
+    $pdf->Cell(0, 10, 'Wali Kelas: ' . $username, 0, 1, 'L'); // Nama user di bawah tabel
 
     $pdf->Output('I', 'laporan_presensi.pdf');
     exit;
