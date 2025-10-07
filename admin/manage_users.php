@@ -61,7 +61,7 @@ if (!$result) {
                         <td>{$user['role']}</td>
                         <td>
                             <a href='edit_user.php?id={$user['id']}' class='btn btn-warning btn-sm'>Edit</a>
-                            <a href='delete_user.php?id={$user['id']}' class='btn btn-danger btn-sm'>Delete</a>
+                            <a href='delete_user.php?id={$user['id']}' class='btn btn-danger btn-sm' onclick=\"return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')\">Delete</a>
                         </td>
                     </tr>";
                 }
