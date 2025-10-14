@@ -10,8 +10,11 @@ $result_unit = mysqli_query($conn, $sql_unit);
 $kelas_data = [];
 $santri_data = [];
 $presensi_data = [];
+$filter_type = 'bulan'; // Default filter type
 $bulan_filter = date('m'); // Default bulan
 $tahun_filter = date('Y'); // Default tahun
+$tanggal_dari = '';
+$tanggal_sampai = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['simpan_presensi'])) {
     $id_unit = $_POST['id_unit'] ?? '';
@@ -41,17 +44,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['simpan_presensi'])) 
     }
 }
 
-// Menampilkan laporan presensi berdasarkan kelas atau santri, bulan dan tahun
+// Menampilkan laporan presensi berdasarkan kelas atau santri, bulan/tahun atau range tanggal
 if (isset($_POST['tampilkan_presensi'])) {
     $mode = $_POST['mode'] ?? 'per_kelas';
     $id_unit = $_POST['id_unit'] ?? '';
     $id_kelas = $_POST['id_kelas'] ?? '';
-    $bulan_filter = $_POST['bulan_filter'] ?? date('m');
-    $tahun_filter = $_POST['tahun_filter'] ?? date('Y');
-
-    // Ambil semua tanggal dalam bulan yang dipilih
-    $first_day_of_month = "$tahun_filter-$bulan_filter-01";
-    $last_day_of_month = date("Y-m-t", strtotime($first_day_of_month)); // Tanggal terakhir bulan ini
+    $filter_type = $_POST['filter_type'] ?? 'bulan';
+    
+    // Tentukan range tanggal berdasarkan tipe filter
+    if ($filter_type == 'bulan') {
+        $bulan_filter = $_POST['bulan_filter'] ?? date('m');
+        $tahun_filter = $_POST['tahun_filter'] ?? date('Y');
+        $first_day_of_month = "$tahun_filter-$bulan_filter-01";
+        $last_day_of_month = date("Y-m-t", strtotime($first_day_of_month));
+    } else {
+        $tanggal_dari = $_POST['tanggal_dari'] ?? '';
+        $tanggal_sampai = $_POST['tanggal_sampai'] ?? '';
+        $first_day_of_month = $tanggal_dari;
+        $last_day_of_month = $tanggal_sampai;
+    }
 
     if ($mode == 'per_kelas') {
         // Query untuk menampilkan presensi berdasarkan kelas dan bulan/tahun
@@ -218,11 +229,11 @@ if (isset($_POST['tampilkan_presensi'])) {
 </head>
 <body>
 <div class="container-fluid mt-5 text-center">
-    <!-- Form Pilih Mode, Unit, Kelas, Santri (jika per santri), Bulan, Tahun -->
+    <!-- Form Pilih Mode, Unit, Kelas, Santri (jika per santri), Filter Type, Bulan/Tahun atau Range Tanggal -->
     <form method="POST" class="mb-4">
         <div class="row g-3 justify-content-center mb-3">
             <div class="col-12">
-                <label class="form-label">Mode Tampilan</label><br>
+                <label class="form-label fw-bold">Mode Tampilan</label><br>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="mode" id="mode_kelas" value="per_kelas" <?= ($_POST['mode'] ?? 'per_kelas') == 'per_kelas' ? 'checked' : '' ?> onchange="this.form.submit()">
                     <label class="form-check-label" for="mode_kelas">Tampilkan per Kelas</label>
@@ -233,10 +244,25 @@ if (isset($_POST['tampilkan_presensi'])) {
                 </div>
             </div>
         </div>
+        
+        <div class="row g-3 justify-content-center mb-3">
+            <div class="col-12">
+                <label class="form-label fw-bold">Tipe Filter Tanggal</label><br>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="filter_type" id="filter_bulan" value="bulan" <?= ($_POST['filter_type'] ?? 'bulan') == 'bulan' ? 'checked' : '' ?> onchange="toggleFilterType()">
+                    <label class="form-check-label" for="filter_bulan">Per Bulan</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="filter_type" id="filter_range" value="range" <?= ($_POST['filter_type'] ?? '') == 'range' ? 'checked' : '' ?> onchange="toggleFilterType()">
+                    <label class="form-check-label" for="filter_range">Range Tanggal</label>
+                </div>
+            </div>
+        </div>
+        
         <div class="row g-3 justify-content-center">
             <div class="col-12 col-md-3">
                 <label for="unit" class="form-label">Pilih Unit</label>
-                <select name="id_unit" id="unit" class="form-select" onchange="this.form.submit()" required>
+                <select name="id_unit" id="unit" class="form-select" required>
                     <option value="">-- Pilih Unit --</option>
                     <?php while ($unit = mysqli_fetch_assoc($result_unit)) { ?>
                         <option value="<?= $unit['id'] ?>" <?= ($_POST['id_unit'] ?? '') == $unit['id'] ? 'selected' : '' ?>>
@@ -269,9 +295,10 @@ if (isset($_POST['tampilkan_presensi'])) {
                 </select>
             </div>
             <?php } ?>
-            <div class="col-12 col-md-3">
+            <!-- Filter Bulan/Tahun -->
+            <div id="filter_bulan_section" class="col-12 col-md-3" style="display: <?= ($_POST['filter_type'] ?? 'bulan') == 'bulan' ? 'block' : 'none' ?>;">
                 <label for="bulan" class="form-label">Pilih Bulan</label>
-                <select name="bulan_filter" id="bulan" class="form-select" required>
+                <select name="bulan_filter" id="bulan" class="form-select">
                     <?php for ($i = 1; $i <= 12; $i++) { ?>
                         <option value="<?= $i ?>" <?= ($bulan_filter == $i) ? 'selected' : '' ?>>
                             <?= DateTime::createFromFormat('!m', $i)->format('F') ?>
@@ -279,9 +306,19 @@ if (isset($_POST['tampilkan_presensi'])) {
                     <?php } ?>
                 </select>
             </div>
-            <div class="col-12 col-md-3">
+            <div id="filter_tahun_section" class="col-12 col-md-3" style="display: <?= ($_POST['filter_type'] ?? 'bulan') == 'bulan' ? 'block' : 'none' ?>;">
                 <label for="tahun" class="form-label">Pilih Tahun</label>
-                <input type="number" name="tahun_filter" id="tahun" class="form-control" value="<?= htmlspecialchars($tahun_filter) ?>" required>
+                <input type="number" name="tahun_filter" id="tahun" class="form-control" value="<?= htmlspecialchars($tahun_filter) ?>">
+            </div>
+            
+            <!-- Filter Range Tanggal -->
+            <div id="filter_dari_section" class="col-12 col-md-3" style="display: <?= ($_POST['filter_type'] ?? 'bulan') == 'range' ? 'block' : 'none' ?>;">
+                <label for="tanggal_dari" class="form-label">Tanggal Dari</label>
+                <input type="date" name="tanggal_dari" id="tanggal_dari" class="form-control" value="<?= htmlspecialchars($tanggal_dari) ?>">
+            </div>
+            <div id="filter_sampai_section" class="col-12 col-md-3" style="display: <?= ($_POST['filter_type'] ?? 'bulan') == 'range' ? 'block' : 'none' ?>;">
+                <label for="tanggal_sampai" class="form-label">Tanggal Sampai</label>
+                <input type="date" name="tanggal_sampai" id="tanggal_sampai" class="form-control" value="<?= htmlspecialchars($tanggal_sampai) ?>">
             </div>
         </div>
         <button type="submit" name="tampilkan_presensi" class="btn btn-primary mt-3 w-100">Tampilkan Presensi</button>
@@ -290,7 +327,11 @@ if (isset($_POST['tampilkan_presensi'])) {
     <!-- Tampilkan laporan presensi di bawah tombol -->
     <?php if (isset($_POST['tampilkan_presensi'])) { ?>
         <h2 class="mt-4">LAPORAN PRESENSI</h2>
-        <h4><?= DateTime::createFromFormat('!m', $bulan_filter)->format('F') . " " . $tahun_filter ?></h4> <!-- Nama Bulan dan Tahun -->
+        <?php if ($filter_type == 'bulan') { ?>
+            <h4><?= DateTime::createFromFormat('!m', $bulan_filter)->format('F') . " " . $tahun_filter ?></h4>
+        <?php } else { ?>
+            <h4><?= date('d-m-Y', strtotime($tanggal_dari)) . " s/d " . date('d-m-Y', strtotime($tanggal_sampai)) ?></h4>
+        <?php } ?>
         <p><strong>Unit:</strong> <?= htmlspecialchars($unit_nama) ?></p>
         <p><strong>Kelas:</strong> <?= htmlspecialchars($kelas_nama) ?></p>
         <?php if (($mode ?? 'per_kelas') == 'per_santri') { ?>
@@ -363,8 +404,14 @@ if (isset($_POST['tampilkan_presensi'])) {
         <form method="POST" action="download_presensi_pdf.php" target="_blank" class="mt-3">
             <input type="hidden" name="id_unit" value="<?= htmlspecialchars($id_unit) ?>">
             <input type="hidden" name="id_kelas" value="<?= htmlspecialchars($id_kelas) ?>">
-            <input type="hidden" name="bulan_filter" value="<?= htmlspecialchars($bulan_filter) ?>">
-            <input type="hidden" name="tahun_filter" value="<?= htmlspecialchars($tahun_filter) ?>">
+            <input type="hidden" name="filter_type" value="<?= htmlspecialchars($filter_type) ?>">
+            <?php if ($filter_type == 'bulan') { ?>
+                <input type="hidden" name="bulan_filter" value="<?= htmlspecialchars($bulan_filter) ?>">
+                <input type="hidden" name="tahun_filter" value="<?= htmlspecialchars($tahun_filter) ?>">
+            <?php } else { ?>
+                <input type="hidden" name="tanggal_dari" value="<?= htmlspecialchars($tanggal_dari) ?>">
+                <input type="hidden" name="tanggal_sampai" value="<?= htmlspecialchars($tanggal_sampai) ?>">
+            <?php } ?>
             <button type="submit" class="btn btn-info w-100">Unduh ke PDF</button>
         </form>
         <?php } elseif (($mode ?? 'per_kelas') == 'per_santri') { ?>
@@ -412,8 +459,14 @@ if (isset($_POST['tampilkan_presensi'])) {
             <input type="hidden" name="id_unit" value="<?= htmlspecialchars($id_unit) ?>">
             <input type="hidden" name="id_kelas" value="<?= htmlspecialchars($id_kelas) ?>">
             <input type="hidden" name="id_santri" value="<?= htmlspecialchars($id_santri) ?>">
-            <input type="hidden" name="bulan_filter" value="<?= htmlspecialchars($bulan_filter) ?>">
-            <input type="hidden" name="tahun_filter" value="<?= htmlspecialchars($tahun_filter) ?>">
+            <input type="hidden" name="filter_type" value="<?= htmlspecialchars($filter_type) ?>">
+            <?php if ($filter_type == 'bulan') { ?>
+                <input type="hidden" name="bulan_filter" value="<?= htmlspecialchars($bulan_filter) ?>">
+                <input type="hidden" name="tahun_filter" value="<?= htmlspecialchars($tahun_filter) ?>">
+            <?php } else { ?>
+                <input type="hidden" name="tanggal_dari" value="<?= htmlspecialchars($tanggal_dari) ?>">
+                <input type="hidden" name="tanggal_sampai" value="<?= htmlspecialchars($tanggal_sampai) ?>">
+            <?php } ?>
             <button type="submit" class="btn btn-info w-100">Unduh ke PDF</button>
         </form>
         <?php } ?>
@@ -438,6 +491,56 @@ if (isset($_POST['tampilkan_presensi'])) {
     // Run on load and resize
     window.addEventListener('load', adjustStickyColumns);
     window.addEventListener('resize', adjustStickyColumns);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const unitSelect = document.getElementById('unit');
+        const kelasSelect = document.getElementById('kelas');
+
+        unitSelect.addEventListener('change', function() {
+            const id_unit = this.value;
+            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+            if (id_unit) {
+                fetch(`get_kelas.php?id_unit=${id_unit}`)
+                .then(response => response.text())
+                .then(data => {
+                    kelasSelect.innerHTML += data;
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+    });
+
+    function toggleFilterType() {
+        const filterType = document.querySelector('input[name="filter_type"]:checked').value;
+        const bulanSection = document.getElementById('filter_bulan_section');
+        const tahunSection = document.getElementById('filter_tahun_section');
+        const dariSection = document.getElementById('filter_dari_section');
+        const sampaiSection = document.getElementById('filter_sampai_section');
+        
+        if (filterType === 'bulan') {
+            bulanSection.style.display = 'block';
+            tahunSection.style.display = 'block';
+            dariSection.style.display = 'none';
+            sampaiSection.style.display = 'none';
+            
+            // Set required
+            document.getElementById('bulan').required = true;
+            document.getElementById('tahun').required = true;
+            document.getElementById('tanggal_dari').required = false;
+            document.getElementById('tanggal_sampai').required = false;
+        } else {
+            bulanSection.style.display = 'none';
+            tahunSection.style.display = 'none';
+            dariSection.style.display = 'block';
+            sampaiSection.style.display = 'block';
+            
+            // Set required
+            document.getElementById('bulan').required = false;
+            document.getElementById('tahun').required = false;
+            document.getElementById('tanggal_dari').required = true;
+            document.getElementById('tanggal_sampai').required = true;
+        }
+    }
 
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('../sw.js')

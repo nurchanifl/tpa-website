@@ -190,7 +190,7 @@ if (isset($_POST['hapus_presensi'])) {
             <?php if (($_POST['mode'] ?? 'per_kelas') == 'per_santri') { ?>
             <div class="col-12 col-md-3">
                 <label for="santri" class="form-label">Pilih Santri</label>
-                <select name="id_santri" id="santri" class="form-select" required>
+                <select name="id_santri" id="santri" class="form-select" onchange="this.form.submit()" required>
                     <option value="">-- Pilih Santri --</option>
                     <?php foreach ($santri_data as $santri) { ?>
                         <option value="<?= $santri['id'] ?>" <?= ($_POST['id_santri'] ?? '') == $santri['id'] ? 'selected' : '' ?>>
