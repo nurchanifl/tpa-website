@@ -121,9 +121,7 @@ if (!empty($_REQUEST)) {
     echo "<style>";
     echo "table { border-collapse: collapse; width: 100%; table-layout: fixed; }";
     echo "th, td { border: 1px solid #000; padding: 8px; text-align: center; vertical-align: middle; font-size: 12px; }";
-    echo "th { background-color: #f0f0f0; font-weight: bold; position: sticky; left: 0; z-index: 1; }";
-    echo "td:first-child, th:first-child { position: sticky; left: 0; background-color: #fff; z-index: 2; }";
-    echo "td:nth-child(2), th:nth-child(2) { position: sticky; left: 50px; background-color: #fff; z-index: 2; }";
+    echo "th { background-color: #f0f0f0; font-weight: bold; }";
     echo "</style>";
     echo "</head>";
     echo "<body>";
