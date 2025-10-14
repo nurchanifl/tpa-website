@@ -121,26 +121,24 @@ if (!empty($_REQUEST)) {
     echo "<style>";
     echo "table { border-collapse: collapse; width: 100%; table-layout: fixed; }";
     echo "th, td { border: 1px solid #000; padding: 8px; text-align: center; vertical-align: middle; font-size: 12px; }";
-    echo "th { background-color: #f0f0f0; font-weight: bold; }";
-    echo ".nama-column { width: 200px; text-align: left; }";
-    echo ".no-column { width: 50px; }";
-    echo ".tanggal-column { width: 60px; }";
-    echo ".total-column { width: 80px; }";
-    echo ".status-column { width: 80px; }";
-    echo ".keterangan-column { width: 150px; text-align: left; }";
+    echo "th { background-color: #f0f0f0; font-weight: bold; position: sticky; left: 0; z-index: 1; }";
+    echo "td:first-child, th:first-child { position: sticky; left: 0; background-color: #fff; z-index: 2; }";
+    echo "td:nth-child(2), th:nth-child(2) { position: sticky; left: 50px; background-color: #fff; z-index: 2; }";
     echo "</style>";
     echo "</head>";
     echo "<body>";
 
     // Judul Laporan
-    echo "<h2>LAPORAN PRESENSI SANTRI</h2>";
-    echo "<p><strong>Unit:</strong> $unit_nama</p>";
-    echo "<p><strong>Kelas:</strong> $kelas_nama</p>";
+    echo "<table style='border: none; margin-bottom: 20px;'>";
+    echo "<tr><td colspan='2' style='border: none; text-align: center; font-size: 16px; font-weight: bold;'>LAPORAN PRESENSI SANTRI</td></tr>";
+    echo "<tr><td style='border: none; width: 150px;'><strong>Unit:</strong></td><td style='border: none;'>$unit_nama</td></tr>";
+    echo "<tr><td style='border: none;'><strong>Kelas:</strong></td><td style='border: none;'>$kelas_nama</td></tr>";
     if ($mode == 'per_santri') {
-        echo "<p><strong>Santri:</strong> $santri_nama</p>";
+        echo "<tr><td style='border: none;'><strong>Santri:</strong></td><td style='border: none;'>$santri_nama</td></tr>";
     }
-    echo "<p><strong>Periode:</strong> $periode_text</p>";
-    echo "<p><strong>Dibuat oleh:</strong> $username</p>";
+    echo "<tr><td style='border: none;'><strong>Periode:</strong></td><td style='border: none;'>$periode_text</td></tr>";
+    echo "<tr><td style='border: none;'><strong>Dibuat oleh:</strong></td><td style='border: none;'>$username</td></tr>";
+    echo "</table>";
     echo "<br>";
 
     if ($mode == 'per_kelas') {
