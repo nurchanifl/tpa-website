@@ -11,8 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mode = $_POST['mode'] ?? 'per_kelas';
     $id_unit = $_POST['id_unit'] ?? '';
     $id_kelas = $_POST['id_kelas'] ?? '';
+    $filter_type = $_POST['filter_type'] ?? 'bulan';
     $bulan_filter = $_POST['bulan_filter'] ?? date('m');
     $tahun_filter = $_POST['tahun_filter'] ?? date('Y');
+    $tanggal_dari = $_POST['tanggal_dari'] ?? '';
+    $tanggal_sampai = $_POST['tanggal_sampai'] ?? '';
 
     // Validasi input
     if (empty($id_unit) || empty($id_kelas)) {
@@ -39,12 +42,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     mysqli_stmt_fetch($stmt_kelas_nama);
     mysqli_stmt_close($stmt_kelas_nama);
 
-    // Ambil data presensi
-    $first_day_of_month = "$tahun_filter-$bulan_filter-01";
-    $last_day_of_month = date("Y-m-t", strtotime($first_day_of_month));
+    // Tentukan range tanggal berdasarkan tipe filter
+    if ($filter_type == 'bulan') {
+        $first_day_of_month = "$tahun_filter-$bulan_filter-01";
+        $last_day_of_month = date("Y-m-t", strtotime($first_day_of_month));
+        $periode_text = DateTime::createFromFormat('!m', $bulan_filter)->format('F') . " $tahun_filter";
+    } else {
+        $first_day_of_month = $tanggal_dari;
+        $last_day_of_month = $tanggal_sampai;
+        $periode_text = date('d-m-Y', strtotime($tanggal_dari)) . " s/d " . date('d-m-Y', strtotime($tanggal_sampai));
+    }
+
+    // Hitung jumlah hari dalam range
+    $start_date = new DateTime($first_day_of_month);
+    $end_date = new DateTime($last_day_of_month);
+    $interval = $start_date->diff($end_date);
+    $total_days = $interval->days + 1;
 
     if ($mode == 'per_kelas') {
-        $sql_presensi = "SELECT p.*, s.nama_santri, DAY(p.tanggal) as day
+        $sql_presensi = "SELECT p.*, s.nama_santri, p.tanggal
                          FROM presensi p
                          JOIN santri s ON p.id_santri = s.id
                          WHERE s.id_kelas = ? AND p.tanggal BETWEEN ? AND ?
@@ -62,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $total_kelas_alpha = 0;
         while ($row = mysqli_fetch_assoc($result_presensi)) {
             $presensi_grouped[$row['id_santri']]['nama_santri'] = $row['nama_santri'];
-            $presensi_grouped[$row['id_santri']]['presensi'][$row['day']] = $row['status'];
+            $presensi_grouped[$row['id_santri']]['presensi'][$row['tanggal']] = $row['status'];
         }
         mysqli_stmt_close($stmt_presensi);
     } elseif ($mode == 'per_santri') {
@@ -112,8 +128,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_close($stmt_santri_nama);
     }
 
-    // Buat PDF
-    $orientation = ($mode == 'per_santri') ? 'P' : 'L'; // Portrait untuk per santri, Landscape untuk per kelas
+    // Buat PDF - selalu Landscape untuk per kelas agar muat banyak kolom tanggal
+    $orientation = 'L'; // Selalu Landscape untuk menghindari terpotong
     $pdf = new FPDF($orientation, 'mm', 'A4');
     $pdf->SetAutoPageBreak(true, 10);
     $pdf->AddPage();
@@ -126,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($mode == 'per_santri') {
         $pdf->Cell(0, 7, "Santri: $santri_nama", 0, 1, 'C');
     }
-    $pdf->Cell(0, 7, "Bulan: " . DateTime::createFromFormat('!m', $bulan_filter)->format('F') . " $tahun_filter", 0, 1, 'C');
+    $pdf->Cell(0, 7, "Periode: " . $periode_text, 0, 1, 'C');
 
     if ($mode == 'per_kelas') {
         // Header Tabel
@@ -135,8 +151,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdf->Cell(50, 10, 'Nama Santri', 1, 0, 'C');
 
         // Header Tanggal
-        for ($day = 1; $day <= date('t', strtotime($first_day_of_month)); $day++) {
-            $pdf->Cell(5, 10, $day, 1, 0, 'C');
+        $current_date = clone $start_date;
+        while ($current_date <= $end_date) {
+            $pdf->Cell(5, 10, $current_date->format('d'), 1, 0, 'C');
+            $current_date->modify('+1 day');
         }
 
         // Header Total
@@ -154,8 +172,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $total_hadir = $total_izin = $total_sakit = $total_alpha = 0;
 
-            for ($day = 1; $day <= date('t', strtotime($first_day_of_month)); $day++) {
-                $status = $santri['presensi'][$day] ?? '';
+            $current_date = clone $start_date;
+            while ($current_date <= $end_date) {
+                $date_str = $current_date->format('Y-m-d');
+                $status = $santri['presensi'][$date_str] ?? '';
                 $short_status = '';
 
                 if ($status == 'Hadir') {
@@ -177,6 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 $pdf->Cell(5, 7, $short_status, 1, 0, 'C');
+                $current_date->modify('+1 day');
             }
 
             $pdf->Cell(15, 7, $total_hadir, 1, 0, 'C');
@@ -223,11 +244,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pdf->Cell(0, 10, 'Wali Kelas: ' . $username, 0, 1, 'L'); // Nama user di bawah tabel
 
     // Generate dynamic filename
-    $bulan_nama = DateTime::createFromFormat('!m', $bulan_filter)->format('F');
+    if ($filter_type == 'bulan') {
+        $bulan_nama = DateTime::createFromFormat('!m', $bulan_filter)->format('F');
+        $periode_filename = $bulan_nama . ' ' . $tahun_filter;
+    } else {
+        $periode_filename = date('d-m-Y', strtotime($tanggal_dari)) . ' sd ' . date('d-m-Y', strtotime($tanggal_sampai));
+    }
+    
     if ($mode == 'per_kelas') {
-        $filename = 'Laporan Presensi ' . $unit_nama . ' ' . $kelas_nama . ' ' . $bulan_nama . ' ' . $tahun_filter . '.pdf';
+        $filename = 'Laporan Presensi ' . $unit_nama . ' ' . $kelas_nama . ' ' . $periode_filename . '.pdf';
     } elseif ($mode == 'per_santri') {
-        $filename = 'Laporan Presensi ' . $santri_nama . ' ' . $bulan_nama . ' ' . $tahun_filter . '.pdf';
+        $filename = 'Laporan Presensi ' . $santri_nama . ' ' . $periode_filename . '.pdf';
     }
 
     $pdf->Output('D', $filename);
