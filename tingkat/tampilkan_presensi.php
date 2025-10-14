@@ -67,8 +67,8 @@ if (isset($_POST['tampilkan_presensi'])) {
     if ($mode == 'per_kelas') {
         // Query untuk menampilkan presensi berdasarkan kelas dan bulan/tahun
         if (!empty($id_unit) && !empty($id_kelas)) {
-            // Ambil presensi per santri untuk bulan tersebut
-            $sql_presensi = "SELECT p.*, s.nama_santri, DAY(p.tanggal) as day
+            // Ambil presensi per santri untuk range tanggal
+            $sql_presensi = "SELECT p.*, s.nama_santri, p.tanggal
                              FROM presensi p
                              JOIN santri s ON p.id_santri = s.id
                              WHERE s.id_kelas = ? AND p.tanggal BETWEEN ? AND ?
@@ -79,12 +79,18 @@ if (isset($_POST['tampilkan_presensi'])) {
             mysqli_stmt_execute($stmt_presensi);
             $result_presensi = mysqli_stmt_get_result($stmt_presensi);
 
-            // Grouping data per santri
+            // Grouping data per santri dengan tanggal lengkap
             $presensi_grouped = [];
             while ($row = mysqli_fetch_assoc($result_presensi)) {
                 $presensi_grouped[$row['id_santri']]['nama_santri'] = $row['nama_santri'];
-                $presensi_grouped[$row['id_santri']]['presensi'][$row['day']] = $row['status'];
+                $presensi_grouped[$row['id_santri']]['presensi'][$row['tanggal']] = $row['status'];
             }
+
+            // Hitung jumlah hari dalam range
+            $start_date = new DateTime($first_day_of_month);
+            $end_date = new DateTime($last_day_of_month);
+            $interval = $start_date->diff($end_date);
+            $total_days = $interval->days + 1;
 
             // Menyiapkan total kehadiran per status
             $presensi_data = [];
@@ -92,6 +98,7 @@ if (isset($_POST['tampilkan_presensi'])) {
             $total_kelas_izin = 0;
             $total_kelas_sakit = 0;
             $total_kelas_alpha = 0;
+            
             foreach ($presensi_grouped as $santri_id => $santri_presensi) {
                 $presensi_data[$santri_id] = $santri_presensi;
                 $presensi_data[$santri_id]['total_hadir'] = 0;
@@ -100,8 +107,11 @@ if (isset($_POST['tampilkan_presensi'])) {
                 $presensi_data[$santri_id]['total_alpha'] = 0;
 
                 // Menghitung total untuk setiap status
-                for ($day = 1; $day <= date('t', strtotime($first_day_of_month)); $day++) {
-                    $status = $santri_presensi['presensi'][$day] ?? null; // Jangan langsung default ke 'Alpha'
+                $current_date = clone $start_date;
+                while ($current_date <= $end_date) {
+                    $date_str = $current_date->format('Y-m-d');
+                    $status = $santri_presensi['presensi'][$date_str] ?? null;
+                    
                     if ($status === 'Hadir') {
                         $presensi_data[$santri_id]['total_hadir']++;
                         $total_kelas_hadir++;
@@ -111,12 +121,13 @@ if (isset($_POST['tampilkan_presensi'])) {
                     } elseif ($status === 'Sakit') {
                         $presensi_data[$santri_id]['total_sakit']++;
                         $total_kelas_sakit++;
-                    } elseif ($status === 'Alpha') { // Hanya hitung jika memang Alpha
+                    } elseif ($status === 'Alpha') {
                         $presensi_data[$santri_id]['total_alpha']++;
                         $total_kelas_alpha++;
                     }
+                    
+                    $current_date->modify('+1 day');
                 }
-
             }
             mysqli_stmt_close($stmt_presensi);
         }
@@ -348,16 +359,21 @@ if (isset($_POST['tampilkan_presensi'])) {
             <tr>
                 <th rowspan="2" class="sticky-column">No</th>
                 <th rowspan="2" class="sticky-column-second">Nama Santri</th>
-                <th colspan="<?= date('t', strtotime($first_day_of_month)) ?>">Tanggal</th>
+                <th colspan="<?= $total_days ?>">Tanggal</th>
                 <th rowspan="2">Total Hadir</th>
                 <th rowspan="2">Total Izin</th>
                 <th rowspan="2">Total Sakit</th>
                 <th rowspan="2">Total Alpha</th>
             </tr>
             <tr>
-                <?php for ($day = 1; $day <= date('t', strtotime($first_day_of_month)); $day++) { ?>
-                    <th><?= $day ?></th>
-                <?php } ?>
+                <?php 
+                $current_date = new DateTime($first_day_of_month);
+                $end_date = new DateTime($last_day_of_month);
+                while ($current_date <= $end_date) { ?>
+                    <th><?= $current_date->format('d/m') ?></th>
+                <?php 
+                    $current_date->modify('+1 day');
+                } ?>
             </tr>
             </thead>
             <tbody>
@@ -365,11 +381,17 @@ if (isset($_POST['tampilkan_presensi'])) {
     <tr>
         <td class="sticky-column"><?= $no++ ?></td>
         <td class="sticky-column-second"><?= htmlspecialchars($santri['nama_santri']) ?></td>
-        <?php for ($day = 1; $day <= date('t', strtotime($first_day_of_month)); $day++) {
-            $status = $santri['presensi'][$day] ?? '&nbsp;'; // Default kosong
+        <?php 
+        $current_date = new DateTime($first_day_of_month);
+        $end_date = new DateTime($last_day_of_month);
+        while ($current_date <= $end_date) {
+            $date_str = $current_date->format('Y-m-d');
+            $status = $santri['presensi'][$date_str] ?? '&nbsp;';
         ?>
             <td><?= $status ?></td>
-        <?php } ?>
+        <?php 
+            $current_date->modify('+1 day');
+        } ?>
         <td><?= $santri['total_hadir'] ?></td>
         <td><?= $santri['total_izin'] ?></td>
         <td><?= $santri['total_sakit'] ?></td>
