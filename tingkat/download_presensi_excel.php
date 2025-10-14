@@ -114,12 +114,13 @@ if (!empty($_REQUEST)) {
     header('Content-Disposition: attachment; filename="Laporan_Presensi_' . $unit_nama . '_' . $kelas_nama . '_' . str_replace(' ', '_', $periode_text) . '.xls"');
     header('Cache-Control: max-age=0');
 
-    echo "<html>";
+    echo "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>";
     echo "<head>";
     echo "<meta charset='UTF-8'>";
+    echo "<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Laporan Presensi</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->";
     echo "<style>";
     echo "table { border-collapse: collapse; width: 100%; table-layout: fixed; }";
-    echo "th, td { border: 1px solid #000; padding: 8px; text-align: center; vertical-align: middle; }";
+    echo "th, td { border: 1px solid #000; padding: 8px; text-align: center; vertical-align: middle; font-size: 12px; }";
     echo "th { background-color: #f0f0f0; font-weight: bold; }";
     echo ".nama-column { width: 200px; text-align: left; }";
     echo ".no-column { width: 50px; }";
