@@ -147,23 +147,20 @@ if (!empty($_REQUEST)) {
         echo "<table>";
         echo "<thead>";
         echo "<tr>";
-        echo "<th class='no-column'>No</th>";
-        echo "<th class='nama-column'>Nama Santri</th>";
-        echo "<th colspan='$total_days'>Tanggal</th>";
-        echo "<th class='total-column'>Total Hadir</th>";
-        echo "<th class='total-column'>Total Izin</th>";
-        echo "<th class='total-column'>Total Sakit</th>";
-        echo "<th class='total-column'>Total Alpha</th>";
-        echo "</tr>";
-        echo "<tr>";
+        echo "<th style='width: 50px;'>No</th>";
+        echo "<th style='width: 200px; text-align: left;'>Nama Santri</th>";
 
         // Header Tanggal
         $current_date = clone $start_date;
         while ($current_date <= $end_date) {
-            echo "<th class='tanggal-column'>" . $current_date->format('d/m') . "</th>";
+            echo "<th style='width: 60px;'>" . $current_date->format('d/m') . "</th>";
             $current_date->modify('+1 day');
         }
 
+        echo "<th style='width: 80px;'>Total Hadir</th>";
+        echo "<th style='width: 80px;'>Total Izin</th>";
+        echo "<th style='width: 80px;'>Total Sakit</th>";
+        echo "<th style='width: 80px;'>Total Alpha</th>";
         echo "</tr>";
         echo "</thead>";
         echo "<tbody>";
@@ -171,8 +168,8 @@ if (!empty($_REQUEST)) {
         $no = 1;
         foreach ($presensi_grouped as $santri) {
             echo "<tr>";
-            echo "<td class='no-column'>$no</td>";
-            echo "<td class='nama-column'>" . htmlspecialchars($santri['nama_santri']) . "</td>";
+            echo "<td style='width: 50px;'>$no</td>";
+            echo "<td style='width: 200px; text-align: left;'>" . htmlspecialchars($santri['nama_santri']) . "</td>";
 
             $total_hadir = $total_izin = $total_sakit = $total_alpha = 0;
 
@@ -191,14 +188,14 @@ if (!empty($_REQUEST)) {
                     $total_alpha++;
                 }
 
-                echo "<td class='status-column'>$status</td>";
+                echo "<td style='width: 60px;'>$status</td>";
                 $current_date->modify('+1 day');
             }
 
-            echo "<td class='total-column'>$total_hadir</td>";
-            echo "<td class='total-column'>$total_izin</td>";
-            echo "<td class='total-column'>$total_sakit</td>";
-            echo "<td class='total-column'>$total_alpha</td>";
+            echo "<td style='width: 80px;'>$total_hadir</td>";
+            echo "<td style='width: 80px;'>$total_izin</td>";
+            echo "<td style='width: 80px;'>$total_sakit</td>";
+            echo "<td style='width: 80px;'>$total_alpha</td>";
             echo "</tr>";
             $no++;
         }
@@ -209,10 +206,10 @@ if (!empty($_REQUEST)) {
         echo "<table>";
         echo "<thead>";
         echo "<tr>";
-        echo "<th class='no-column'>No</th>";
-        echo "<th class='tanggal-column'>Tanggal</th>";
-        echo "<th class='status-column'>Status</th>";
-        echo "<th class='keterangan-column'>Keterangan</th>";
+        echo "<th style='width: 50px;'>No</th>";
+        echo "<th style='width: 100px;'>Tanggal</th>";
+        echo "<th style='width: 80px;'>Status</th>";
+        echo "<th style='width: 200px; text-align: left;'>Keterangan</th>";
         echo "</tr>";
         echo "</thead>";
         echo "<tbody>";
@@ -220,10 +217,10 @@ if (!empty($_REQUEST)) {
         $no = 1;
         foreach ($presensi_data as $presensi) {
             echo "<tr>";
-            echo "<td class='no-column'>$no</td>";
-            echo "<td class='tanggal-column'>" . htmlspecialchars($presensi['tanggal_formatted']) . "</td>";
-            echo "<td class='status-column'>" . htmlspecialchars($presensi['status']) . "</td>";
-            echo "<td class='keterangan-column'>" . htmlspecialchars($presensi['keterangan'] ?? '-') . "</td>";
+            echo "<td style='width: 50px;'>$no</td>";
+            echo "<td style='width: 100px;'>" . htmlspecialchars($presensi['tanggal_formatted']) . "</td>";
+            echo "<td style='width: 80px;'>" . htmlspecialchars($presensi['status']) . "</td>";
+            echo "<td style='width: 200px; text-align: left;'>" . htmlspecialchars($presensi['keterangan'] ?? '-') . "</td>";
             echo "</tr>";
             $no++;
         }
