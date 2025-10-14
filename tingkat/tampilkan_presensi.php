@@ -423,7 +423,7 @@ if (isset($_POST['tampilkan_presensi'])) {
         </div>
         <?php if (($mode ?? 'per_kelas') == 'per_kelas') { ?>
         <!-- Form untuk unduh PDF -->
-        <form method="POST" action="download_presensi_pdf.php" target="_blank" class="mt-3">
+        <form method="GET" action="download_presensi_pdf.php" target="_blank" class="mt-3">
             <input type="hidden" name="mode" value="per_kelas">
             <input type="hidden" name="id_unit" value="<?= htmlspecialchars($id_unit) ?>">
             <input type="hidden" name="id_kelas" value="<?= htmlspecialchars($id_kelas) ?>">
@@ -477,7 +477,7 @@ if (isset($_POST['tampilkan_presensi'])) {
             </div>
         </div>
         <!-- Form untuk unduh PDF per santri -->
-        <form method="POST" action="download_presensi_pdf.php" target="_blank" class="mt-3">
+        <form method="GET" action="download_presensi_pdf.php" target="_blank" class="mt-3">
             <input type="hidden" name="mode" value="per_santri">
             <input type="hidden" name="id_unit" value="<?= htmlspecialchars($id_unit) ?>">
             <input type="hidden" name="id_kelas" value="<?= htmlspecialchars($id_kelas) ?>">
