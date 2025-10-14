@@ -422,21 +422,41 @@ if (isset($_POST['tampilkan_presensi'])) {
         </table>
         </div>
         <?php if (($mode ?? 'per_kelas') == 'per_kelas') { ?>
-        <!-- Form untuk unduh PDF -->
-        <form method="GET" action="download_presensi_pdf.php" target="_blank" class="mt-3">
-            <input type="hidden" name="mode" value="per_kelas">
-            <input type="hidden" name="id_unit" value="<?= htmlspecialchars($id_unit) ?>">
-            <input type="hidden" name="id_kelas" value="<?= htmlspecialchars($id_kelas) ?>">
-            <input type="hidden" name="filter_type" value="<?= htmlspecialchars($filter_type) ?>">
-            <?php if ($filter_type == 'bulan') { ?>
-                <input type="hidden" name="bulan_filter" value="<?= htmlspecialchars($bulan_filter) ?>">
-                <input type="hidden" name="tahun_filter" value="<?= htmlspecialchars($tahun_filter) ?>">
-            <?php } else { ?>
-                <input type="hidden" name="tanggal_dari" value="<?= htmlspecialchars($tanggal_dari) ?>">
-                <input type="hidden" name="tanggal_sampai" value="<?= htmlspecialchars($tanggal_sampai) ?>">
-            <?php } ?>
-            <button type="submit" class="btn btn-info w-100">Unduh ke PDF</button>
-        </form>
+        <!-- Form untuk unduh PDF dan Excel -->
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <form method="GET" action="download_presensi_pdf.php" target="_blank">
+                    <input type="hidden" name="mode" value="per_kelas">
+                    <input type="hidden" name="id_unit" value="<?= htmlspecialchars($id_unit) ?>">
+                    <input type="hidden" name="id_kelas" value="<?= htmlspecialchars($id_kelas) ?>">
+                    <input type="hidden" name="filter_type" value="<?= htmlspecialchars($filter_type) ?>">
+                    <?php if ($filter_type == 'bulan') { ?>
+                        <input type="hidden" name="bulan_filter" value="<?= htmlspecialchars($bulan_filter) ?>">
+                        <input type="hidden" name="tahun_filter" value="<?= htmlspecialchars($tahun_filter) ?>">
+                    <?php } else { ?>
+                        <input type="hidden" name="tanggal_dari" value="<?= htmlspecialchars($tanggal_dari) ?>">
+                        <input type="hidden" name="tanggal_sampai" value="<?= htmlspecialchars($tanggal_sampai) ?>">
+                    <?php } ?>
+                    <button type="submit" class="btn btn-info w-100">Unduh ke PDF</button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <form method="GET" action="download_presensi_excel.php" target="_blank">
+                    <input type="hidden" name="mode" value="per_kelas">
+                    <input type="hidden" name="id_unit" value="<?= htmlspecialchars($id_unit) ?>">
+                    <input type="hidden" name="id_kelas" value="<?= htmlspecialchars($id_kelas) ?>">
+                    <input type="hidden" name="filter_type" value="<?= htmlspecialchars($filter_type) ?>">
+                    <?php if ($filter_type == 'bulan') { ?>
+                        <input type="hidden" name="bulan_filter" value="<?= htmlspecialchars($bulan_filter) ?>">
+                        <input type="hidden" name="tahun_filter" value="<?= htmlspecialchars($tahun_filter) ?>">
+                    <?php } else { ?>
+                        <input type="hidden" name="tanggal_dari" value="<?= htmlspecialchars($tanggal_dari) ?>">
+                        <input type="hidden" name="tanggal_sampai" value="<?= htmlspecialchars($tanggal_sampai) ?>">
+                    <?php } ?>
+                    <button type="submit" class="btn btn-success w-100">Unduh ke Excel</button>
+                </form>
+            </div>
+        </div>
         <?php } elseif (($mode ?? 'per_kelas') == 'per_santri') { ?>
         <!-- Ringkasan Kehadiran Santri -->
         <div class="mt-3">
@@ -476,22 +496,43 @@ if (isset($_POST['tampilkan_presensi'])) {
                 </div>
             </div>
         </div>
-        <!-- Form untuk unduh PDF per santri -->
-        <form method="GET" action="download_presensi_pdf.php" target="_blank" class="mt-3">
-            <input type="hidden" name="mode" value="per_santri">
-            <input type="hidden" name="id_unit" value="<?= htmlspecialchars($id_unit) ?>">
-            <input type="hidden" name="id_kelas" value="<?= htmlspecialchars($id_kelas) ?>">
-            <input type="hidden" name="id_santri" value="<?= htmlspecialchars($id_santri) ?>">
-            <input type="hidden" name="filter_type" value="<?= htmlspecialchars($filter_type) ?>">
-            <?php if ($filter_type == 'bulan') { ?>
-                <input type="hidden" name="bulan_filter" value="<?= htmlspecialchars($bulan_filter) ?>">
-                <input type="hidden" name="tahun_filter" value="<?= htmlspecialchars($tahun_filter) ?>">
-            <?php } else { ?>
-                <input type="hidden" name="tanggal_dari" value="<?= htmlspecialchars($tanggal_dari) ?>">
-                <input type="hidden" name="tanggal_sampai" value="<?= htmlspecialchars($tanggal_sampai) ?>">
-            <?php } ?>
-            <button type="submit" class="btn btn-info w-100">Unduh ke PDF</button>
-        </form>
+        <!-- Form untuk unduh PDF dan Excel per santri -->
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <form method="GET" action="download_presensi_pdf.php" target="_blank">
+                    <input type="hidden" name="mode" value="per_santri">
+                    <input type="hidden" name="id_unit" value="<?= htmlspecialchars($id_unit) ?>">
+                    <input type="hidden" name="id_kelas" value="<?= htmlspecialchars($id_kelas) ?>">
+                    <input type="hidden" name="id_santri" value="<?= htmlspecialchars($id_santri) ?>">
+                    <input type="hidden" name="filter_type" value="<?= htmlspecialchars($filter_type) ?>">
+                    <?php if ($filter_type == 'bulan') { ?>
+                        <input type="hidden" name="bulan_filter" value="<?= htmlspecialchars($bulan_filter) ?>">
+                        <input type="hidden" name="tahun_filter" value="<?= htmlspecialchars($tahun_filter) ?>">
+                    <?php } else { ?>
+                        <input type="hidden" name="tanggal_dari" value="<?= htmlspecialchars($tanggal_dari) ?>">
+                        <input type="hidden" name="tanggal_sampai" value="<?= htmlspecialchars($tanggal_sampai) ?>">
+                    <?php } ?>
+                    <button type="submit" class="btn btn-info w-100">Unduh ke PDF</button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <form method="GET" action="download_presensi_excel.php" target="_blank">
+                    <input type="hidden" name="mode" value="per_santri">
+                    <input type="hidden" name="id_unit" value="<?= htmlspecialchars($id_unit) ?>">
+                    <input type="hidden" name="id_kelas" value="<?= htmlspecialchars($id_kelas) ?>">
+                    <input type="hidden" name="id_santri" value="<?= htmlspecialchars($id_santri) ?>">
+                    <input type="hidden" name="filter_type" value="<?= htmlspecialchars($filter_type) ?>">
+                    <?php if ($filter_type == 'bulan') { ?>
+                        <input type="hidden" name="bulan_filter" value="<?= htmlspecialchars($bulan_filter) ?>">
+                        <input type="hidden" name="tahun_filter" value="<?= htmlspecialchars($tahun_filter) ?>">
+                    <?php } else { ?>
+                        <input type="hidden" name="tanggal_dari" value="<?= htmlspecialchars($tanggal_dari) ?>">
+                        <input type="hidden" name="tanggal_sampai" value="<?= htmlspecialchars($tanggal_sampai) ?>">
+                    <?php } ?>
+                    <button type="submit" class="btn btn-success w-100">Unduh ke Excel</button>
+                </form>
+            </div>
+        </div>
         <?php } ?>
 
     <?php } ?>
