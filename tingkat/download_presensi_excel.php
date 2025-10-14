@@ -118,10 +118,15 @@ if (!empty($_REQUEST)) {
     echo "<head>";
     echo "<meta charset='UTF-8'>";
     echo "<style>";
-    echo "table { border-collapse: collapse; width: 100%; }";
-    echo "th, td { border: 1px solid #000; padding: 5px; text-align: center; }";
+    echo "table { border-collapse: collapse; width: 100%; table-layout: fixed; }";
+    echo "th, td { border: 1px solid #000; padding: 8px; text-align: center; vertical-align: middle; }";
     echo "th { background-color: #f0f0f0; font-weight: bold; }";
-    echo ".sticky-column { background-color: #fff; }";
+    echo ".nama-column { width: 200px; text-align: left; }";
+    echo ".no-column { width: 50px; }";
+    echo ".tanggal-column { width: 60px; }";
+    echo ".total-column { width: 80px; }";
+    echo ".status-column { width: 80px; }";
+    echo ".keterangan-column { width: 150px; text-align: left; }";
     echo "</style>";
     echo "</head>";
     echo "<body>";
@@ -141,20 +146,20 @@ if (!empty($_REQUEST)) {
         echo "<table>";
         echo "<thead>";
         echo "<tr>";
-        echo "<th rowspan='2'>No</th>";
-        echo "<th rowspan='2'>Nama Santri</th>";
+        echo "<th class='no-column'>No</th>";
+        echo "<th class='nama-column'>Nama Santri</th>";
         echo "<th colspan='$total_days'>Tanggal</th>";
-        echo "<th rowspan='2'>Total Hadir</th>";
-        echo "<th rowspan='2'>Total Izin</th>";
-        echo "<th rowspan='2'>Total Sakit</th>";
-        echo "<th rowspan='2'>Total Alpha</th>";
+        echo "<th class='total-column'>Total Hadir</th>";
+        echo "<th class='total-column'>Total Izin</th>";
+        echo "<th class='total-column'>Total Sakit</th>";
+        echo "<th class='total-column'>Total Alpha</th>";
         echo "</tr>";
         echo "<tr>";
 
         // Header Tanggal
         $current_date = clone $start_date;
         while ($current_date <= $end_date) {
-            echo "<th>" . $current_date->format('d/m') . "</th>";
+            echo "<th class='tanggal-column'>" . $current_date->format('d/m') . "</th>";
             $current_date->modify('+1 day');
         }
 
@@ -165,8 +170,8 @@ if (!empty($_REQUEST)) {
         $no = 1;
         foreach ($presensi_grouped as $santri) {
             echo "<tr>";
-            echo "<td>$no</td>";
-            echo "<td>" . htmlspecialchars($santri['nama_santri']) . "</td>";
+            echo "<td class='no-column'>$no</td>";
+            echo "<td class='nama-column'>" . htmlspecialchars($santri['nama_santri']) . "</td>";
 
             $total_hadir = $total_izin = $total_sakit = $total_alpha = 0;
 
@@ -185,14 +190,14 @@ if (!empty($_REQUEST)) {
                     $total_alpha++;
                 }
 
-                echo "<td>$status</td>";
+                echo "<td class='status-column'>$status</td>";
                 $current_date->modify('+1 day');
             }
 
-            echo "<td>$total_hadir</td>";
-            echo "<td>$total_izin</td>";
-            echo "<td>$total_sakit</td>";
-            echo "<td>$total_alpha</td>";
+            echo "<td class='total-column'>$total_hadir</td>";
+            echo "<td class='total-column'>$total_izin</td>";
+            echo "<td class='total-column'>$total_sakit</td>";
+            echo "<td class='total-column'>$total_alpha</td>";
             echo "</tr>";
             $no++;
         }
@@ -203,10 +208,10 @@ if (!empty($_REQUEST)) {
         echo "<table>";
         echo "<thead>";
         echo "<tr>";
-        echo "<th>No</th>";
-        echo "<th>Tanggal</th>";
-        echo "<th>Status</th>";
-        echo "<th>Keterangan</th>";
+        echo "<th class='no-column'>No</th>";
+        echo "<th class='tanggal-column'>Tanggal</th>";
+        echo "<th class='status-column'>Status</th>";
+        echo "<th class='keterangan-column'>Keterangan</th>";
         echo "</tr>";
         echo "</thead>";
         echo "<tbody>";
@@ -214,10 +219,10 @@ if (!empty($_REQUEST)) {
         $no = 1;
         foreach ($presensi_data as $presensi) {
             echo "<tr>";
-            echo "<td>$no</td>";
-            echo "<td>" . htmlspecialchars($presensi['tanggal_formatted']) . "</td>";
-            echo "<td>" . htmlspecialchars($presensi['status']) . "</td>";
-            echo "<td>" . htmlspecialchars($presensi['keterangan'] ?? '-') . "</td>";
+            echo "<td class='no-column'>$no</td>";
+            echo "<td class='tanggal-column'>" . htmlspecialchars($presensi['tanggal_formatted']) . "</td>";
+            echo "<td class='status-column'>" . htmlspecialchars($presensi['status']) . "</td>";
+            echo "<td class='keterangan-column'>" . htmlspecialchars($presensi['keterangan'] ?? '-') . "</td>";
             echo "</tr>";
             $no++;
         }
