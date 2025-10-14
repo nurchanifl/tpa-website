@@ -60,10 +60,11 @@ if ($_SESSION['role'] !== 'admin') {
         <h2>Selamat datang, <?php echo $_SESSION['username']; ?>!</h2>
         <p>Ini adalah halaman admin yang hanya bisa diakses oleh pengguna dengan hak akses admin.</p>
         
-        <div class="row mt-4">
+        <!-- Kelola Santri & Unit -->
+        <h3 class="mt-5 mb-3"><i class="fas fa-users-cog"></i> Kelola Santri & Unit</h3>
+        <div class="row">
             <?php
-            // Data menu untuk dashboard admin
-            $menus = [
+            $santri_menus = [
                 [
                     'title' => 'Tambah Santri',
                     'description' => 'Menambahkan santri baru ke dalam database.',
@@ -85,15 +86,37 @@ if ($_SESSION['role'] !== 'admin') {
                     'color' => 'linear-gradient(135deg, #ffc107, #e0a800)',
                     'link' => '../tingkat/unit.php'
                 ],
+            ];
+
+            foreach ($santri_menus as $menu): ?>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body text-white" style="background: <?= $menu['color']; ?>;">
+                            <div class="d-flex align-items-center">
+                                <div class="icon-circle bg-white text-dark me-3 shadow-sm">
+                                    <i class="<?= $menu['icon']; ?> fs-3"></i>
+                                </div>
+                                <div>
+                                    <h5 class="card-title mb-0"><?= $menu['title']; ?></h5>
+                                    <p class="card-text"><?= $menu['description']; ?></p>
+                                </div>
+                            </div>
+                            <a href="<?= $menu['link']; ?>" class="btn btn-outline-light mt-3 w-100 stretched-link">
+                                Akses <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Kelola Presensi -->
+        <h3 class="mt-5 mb-3"><i class="fas fa-clipboard-check"></i> Kelola Presensi</h3>
+        <div class="row">
+            <?php
+            $presensi_menus = [
                 [
-                    'title' => 'Kelola Pengguna',
-                    'description' => 'Tambahkan, ubah, atau hapus pengguna dari sistem.',
-                    'icon' => 'fas fa-user-cog',
-                    'color' => 'linear-gradient(135deg, #dc3545, #c82333)',
-                    'link' => '../admin/manage_users.php'
-                ],
-                [
-                    'title' => 'Presensi Santri',
+                    'title' => 'Input Presensi',
                     'description' => 'Mencatat kehadiran santri per kelas.',
                     'icon' => 'fas fa-clipboard-list',
                     'color' => 'linear-gradient(135deg, #007bff, #0056b3)',
@@ -103,41 +126,112 @@ if ($_SESSION['role'] !== 'admin') {
                     'title' => 'Data Presensi',
                     'description' => 'Lihat dan filter data kehadiran santri.',
                     'icon' => 'fas fa-table',
-                    'color' => 'linear-gradient(135deg, #6c757d, #495057)',
+                    'color' => 'linear-gradient(135deg, #17a2b8, #138496)',
                     'link' => '../tingkat/tampilkan_presensi.php'
+                ],
+                [
+                    'title' => 'Hapus Presensi',
+                    'description' => 'Hapus data presensi per kelas atau per santri.',
+                    'icon' => 'fas fa-trash-alt',
+                    'color' => 'linear-gradient(135deg, #dc3545, #c82333)',
+                    'link' => '../tingkat/hapus_presensi.php'
                 ],
                 [
                     'title' => 'Hari Libur',
                     'description' => 'Atur hari libur untuk TPA.',
-                    'icon' => 'fas fa-calendar-alt',
+                    'icon' => 'fas fa-calendar-times',
                     'color' => 'linear-gradient(135deg, #6c757d, #495057)',
                     'link' => '../tingkat/hari_libur.php'
                 ],
+            ];
+
+            foreach ($presensi_menus as $menu): ?>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body text-white" style="background: <?= $menu['color']; ?>;">
+                            <div class="d-flex align-items-center">
+                                <div class="icon-circle bg-white text-dark me-3 shadow-sm">
+                                    <i class="<?= $menu['icon']; ?> fs-3"></i>
+                                </div>
+                                <div>
+                                    <h5 class="card-title mb-0"><?= $menu['title']; ?></h5>
+                                    <p class="card-text"><?= $menu['description']; ?></p>
+                                </div>
+                            </div>
+                            <a href="<?= $menu['link']; ?>" class="btn btn-outline-light mt-3 w-100 stretched-link">
+                                Akses <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Kelola Galeri -->
+        <h3 class="mt-5 mb-3"><i class="fas fa-images"></i> Kelola Galeri</h3>
+        <div class="row">
+            <?php
+            $galeri_menus = [
                 [
                     'title' => 'Tambah Galeri',
                     'description' => 'Tambah foto dan video TPA.',
                     'icon' => 'fas fa-image',
-                    'color' => 'linear-gradient(135deg, #6c757d, #495057)',
+                    'color' => 'linear-gradient(135deg, #28a745, #218838)',
                     'link' => 'upload_galeri.php'
                 ],
                 [
-                    'title' => 'Kelola Kategori Galeri',
-                    'description' => 'Mengelola Kategori galeri foto dan video TPA.',
-                    'icon' => 'fas fa-images',
-                    'color' => 'linear-gradient(135deg, #6c757d, #495057)',
+                    'title' => 'Kelola Kategori',
+                    'description' => 'Mengelola kategori galeri foto dan video TPA.',
+                    'icon' => 'fas fa-folder',
+                    'color' => 'linear-gradient(135deg, #ffc107, #e0a800)',
                     'link' => 'kelola_galeri_kategori.php'
                 ],
                 [
-                    'title' => 'Galeri',
+                    'title' => 'Lihat Galeri',
                     'description' => 'Lihat galeri foto dan video TPA.',
                     'icon' => 'fas fa-images',
-                    'color' => 'linear-gradient(135deg, #6c757d, #495057)',
+                    'color' => 'linear-gradient(135deg, #17a2b8, #138496)',
                     'link' => 'galeri.php'
                 ],
             ];
 
-            // Loop untuk menampilkan kartu menu
-            foreach ($menus as $menu): ?>
+            foreach ($galeri_menus as $menu): ?>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body text-white" style="background: <?= $menu['color']; ?>;">
+                            <div class="d-flex align-items-center">
+                                <div class="icon-circle bg-white text-dark me-3 shadow-sm">
+                                    <i class="<?= $menu['icon']; ?> fs-3"></i>
+                                </div>
+                                <div>
+                                    <h5 class="card-title mb-0"><?= $menu['title']; ?></h5>
+                                    <p class="card-text"><?= $menu['description']; ?></p>
+                                </div>
+                            </div>
+                            <a href="<?= $menu['link']; ?>" class="btn btn-outline-light mt-3 w-100 stretched-link">
+                                Akses <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Kelola Sistem -->
+        <h3 class="mt-5 mb-3"><i class="fas fa-cogs"></i> Kelola Sistem</h3>
+        <div class="row">
+            <?php
+            $sistem_menus = [
+                [
+                    'title' => 'Kelola Pengguna',
+                    'description' => 'Tambahkan, ubah, atau hapus pengguna dari sistem.',
+                    'icon' => 'fas fa-user-cog',
+                    'color' => 'linear-gradient(135deg, #dc3545, #c82333)',
+                    'link' => '../admin/manage_users.php'
+                ],
+            ];
+
+            foreach ($sistem_menus as $menu): ?>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card shadow-lg border-0">
                         <div class="card-body text-white" style="background: <?= $menu['color']; ?>;">

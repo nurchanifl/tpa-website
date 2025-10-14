@@ -84,89 +84,98 @@ if ($_SESSION['role'] !== 'user') {
         <h2>Selamat datang, <?php echo $_SESSION['username']; ?>!</h2>
         <p>Ini adalah halaman user yang hanya bisa diakses oleh pengguna dengan hak akses user.</p>
         
-        <div class="row mt-4">
-            <!-- Tambah Santri -->
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-lg border-0 rounded-3 hover-zoom">
-                    <div class="card-body text-white rounded" style="background: linear-gradient(135deg, #28a745, #218838);">
-                        <div class="d-flex align-items-center">
-                            <div class="icon-circle bg-white text-success me-3 shadow-sm">
-                                <i class="fas fa-user-plus fs-3"></i>
-                            </div>
-                            <div>
-                                <h5 class="card-title mb-0">Tambah Santri</h5>
-                                <p class="card-text">Menambahkan santri baru ke dalam database.</p>
-                            </div>
-                        </div>
-                        <a href="../tingkat/tambah_santri.php" class="btn btn-outline-light mt-3 w-100 stretched-link">
-                            Tambahkan <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
+        <!-- Kelola Santri -->
+        <h3 class="mt-5 mb-3"><i class="fas fa-users-cog"></i> Kelola Santri</h3>
+        <div class="row">
+            <?php
+            $santri_menus = [
+                [
+                    'title' => 'Tambah Santri',
+                    'description' => 'Menambahkan santri baru ke dalam database.',
+                    'icon' => 'fas fa-user-plus',
+                    'color' => 'linear-gradient(135deg, #28a745, #218838)',
+                    'link' => '../tingkat/tambah_santri.php'
+                ],
+                [
+                    'title' => 'Daftar Santri',
+                    'description' => 'Lihat daftar santri yang terdaftar di TPA.',
+                    'icon' => 'fas fa-users',
+                    'color' => 'linear-gradient(135deg, #17a2b8, #138496)',
+                    'link' => '../tingkat/daftar_santri.php'
+                ],
+            ];
 
-            <!-- Daftar Santri -->
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-lg border-0 rounded-3 hover-zoom">
-                    <div class="card-body text-white rounded" style="background: linear-gradient(135deg, #17a2b8, #138496);">
-                        <div class="d-flex align-items-center">
-                            <div class="icon-circle bg-white text-info me-3 shadow-sm">
-                                <i class="fas fa-users fs-3"></i>
+            foreach ($santri_menus as $menu): ?>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card shadow-lg border-0 rounded-3">
+                        <div class="card-body text-white rounded" style="background: <?= $menu['color']; ?>;">
+                            <div class="d-flex align-items-center">
+                                <div class="icon-circle bg-white text-dark me-3 shadow-sm">
+                                    <i class="<?= $menu['icon']; ?> fs-3"></i>
+                                </div>
+                                <div>
+                                    <h5 class="card-title mb-0"><?= $menu['title']; ?></h5>
+                                    <p class="card-text"><?= $menu['description']; ?></p>
+                                </div>
                             </div>
-                            <div>
-                                <h5 class="card-title mb-0">Daftar Santri</h5>
-                                <p class="card-text">Lihat daftar santri yang terdaftar di TPA.</p>
-                            </div>
+                            <a href="<?= $menu['link']; ?>" class="btn btn-outline-light mt-3 w-100 stretched-link">
+                                Akses <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
                         </div>
-                        <a href="../tingkat/daftar_santri.php" class="btn btn-outline-light mt-3 w-100 stretched-link">
-                            Lihat Daftar <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
                     </div>
                 </div>
-            </div>
-
-            <!-- Presensi Santri -->
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-lg border-0 rounded-3 hover-zoom">
-                    <div class="card-body text-white rounded" style="background: linear-gradient(135deg, #007bff, #0056b3);">
-                        <div class="d-flex align-items-center">
-                            <div class="icon-circle bg-white text-primary me-3 shadow-sm">
-                                <i class="fas fa-clipboard-list fs-3"></i>
-                            </div>
-                            <div>
-                                <h5 class="card-title mb-0">Presensi Santri</h5>
-                                <p class="card-text">Mencatat kehadiran santri per kelas.</p>
-                            </div>
-                        </div>
-                        <a href="../tingkat/presensi_santri.php" class="btn btn-outline-light mt-3 w-100 stretched-link">
-                            Presensi <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tampilkan Data Presensi -->
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-lg border-0 rounded-3 hover-zoom">
-                    <div class="card-body text-white rounded" style="background: linear-gradient(135deg, #6c757d, #495057);">
-                        <div class="d-flex align-items-center">
-                            <div class="icon-circle bg-white text-secondary me-3 shadow-sm">
-                                <i class="fas fa-table fs-3"></i>
-                            </div>
-                            <div>
-                                <h5 class="card-title mb-0">Tampilkan Data Presensi</h5>
-                                <p class="card-text">Lihat dan filter data kehadiran santri.</p>
-                            </div>
-                        </div>
-                        <a href="../tingkat/tampilkan_presensi.php" class="btn btn-outline-light mt-3 w-100 stretched-link">
-                            Lihat Presensi <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
 
-         <!-- Tampilkan Data Presensi -->
+        <!-- Kelola Presensi -->
+        <h3 class="mt-5 mb-3"><i class="fas fa-clipboard-check"></i> Kelola Presensi</h3>
+        <div class="row">
+            <?php
+            $presensi_menus = [
+                [
+                    'title' => 'Input Presensi',
+                    'description' => 'Mencatat kehadiran santri per kelas.',
+                    'icon' => 'fas fa-clipboard-list',
+                    'color' => 'linear-gradient(135deg, #007bff, #0056b3)',
+                    'link' => '../tingkat/presensi_santri.php'
+                ],
+                [
+                    'title' => 'Data Presensi',
+                    'description' => 'Lihat dan filter data kehadiran santri.',
+                    'icon' => 'fas fa-table',
+                    'color' => 'linear-gradient(135deg, #17a2b8, #138496)',
+                    'link' => '../tingkat/tampilkan_presensi.php'
+                ],
+                [
+                    'title' => 'Hapus Presensi',
+                    'description' => 'Hapus data presensi per kelas atau per santri.',
+                    'icon' => 'fas fa-trash-alt',
+                    'color' => 'linear-gradient(135deg, #dc3545, #c82333)',
+                    'link' => '../tingkat/hapus_presensi.php'
+                ],
+            ];
+
+            foreach ($presensi_menus as $menu): ?>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card shadow-lg border-0 rounded-3">
+                        <div class="card-body text-white rounded" style="background: <?= $menu['color']; ?>;">
+                            <div class="d-flex align-items-center">
+                                <div class="icon-circle bg-white text-dark me-3 shadow-sm">
+                                    <i class="<?= $menu['icon']; ?> fs-3"></i>
+                                </div>
+                                <div>
+                                    <h5 class="card-title mb-0"><?= $menu['title']; ?></h5>
+                                    <p class="card-text"><?= $menu['description']; ?></p>
+                                </div>
+                            </div>
+                            <a href="<?= $menu['link']; ?>" class="btn btn-outline-light mt-3 w-100 stretched-link">
+                                Akses <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
          
         
     </main>
