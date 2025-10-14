@@ -55,17 +55,20 @@ if (isset($_POST['simpan_presensi'])) {
     }
 
     foreach ($status_data as $id_santri => $status) {
-        $keterangan = $keterangan_data[$id_santri] ?? '';
-        $sql_insert = "INSERT INTO presensi (id_santri, tanggal, status, keterangan)
-                       VALUES (?, ?, ?, ?)
-                       ON DUPLICATE KEY UPDATE status = VALUES(status), keterangan = VALUES(keterangan)";
-        $stmt = mysqli_prepare($conn, $sql_insert);
-        if ($stmt) {
-            mysqli_stmt_bind_param($stmt, 'isss', $id_santri, $tanggal, $status, $keterangan);
-            mysqli_stmt_execute($stmt);
-            mysqli_stmt_close($stmt);
-        } else {
-            die("Kesalahan pada query: " . mysqli_error($conn));
+        // Hanya simpan jika status dipilih (tidak kosong)
+        if (!empty($status)) {
+            $keterangan = $keterangan_data[$id_santri] ?? '';
+            $sql_insert = "INSERT INTO presensi (id_santri, tanggal, status, keterangan)
+                           VALUES (?, ?, ?, ?)
+                           ON DUPLICATE KEY UPDATE status = VALUES(status), keterangan = VALUES(keterangan)";
+            $stmt = mysqli_prepare($conn, $sql_insert);
+            if ($stmt) {
+                mysqli_stmt_bind_param($stmt, 'isss', $id_santri, $tanggal, $status, $keterangan);
+                mysqli_stmt_execute($stmt);
+                mysqli_stmt_close($stmt);
+            } else {
+                die("Kesalahan pada query: " . mysqli_error($conn));
+            }
         }
     }
     header("Location: presensi_santri.php?success=true");
@@ -99,7 +102,7 @@ if (isset($_POST['simpan_presensi'])) {
             </div>
             <div class="col-12 col-md-4">
                 <label for="unit" class="form-label">Pilih Unit</label>
-                <select name="id_unit" id="unit" class="form-select" onchange="this.form.submit()" required>
+                <select name="id_unit" id="unit" class="form-select" required>
                     <option value="">-- Pilih Unit --</option>
                     <?php while ($unit = mysqli_fetch_assoc($result_unit)) { ?>
                         <option value="<?= $unit['id'] ?>" <?= ($_POST['id_unit'] ?? '') == $unit['id'] ? 'selected' : '' ?>>
@@ -158,6 +161,9 @@ if (isset($_POST['simpan_presensi'])) {
                             }
                             mysqli_stmt_close($stmt_presensi);
 
+                            // Tambahkan opsi kosong sebagai default
+                            echo '<option value="">-- Pilih Status --</option>';
+                            
                             $options = ['Hadir', 'Izin', 'Sakit', 'Alpha'];
                             foreach ($options as $option) {
                                 $selected = ($existing_status === $option) ? 'selected' : '';
@@ -194,6 +200,24 @@ if (isset($_POST['simpan_presensi'])) {
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const unitSelect = document.getElementById('unit');
+        const kelasSelect = document.getElementById('kelas');
+
+        unitSelect.addEventListener('change', function() {
+            const id_unit = this.value;
+            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+            if (id_unit) {
+                fetch(`get_kelas.php?id_unit=${id_unit}`)
+                .then(response => response.text())
+                .then(data => {
+                    kelasSelect.innerHTML += data;
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+    });
+
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('../sw.js')
             .then(function(registration) {
