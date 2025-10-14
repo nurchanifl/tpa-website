@@ -7,15 +7,15 @@ session_start();
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Unknown User';
 
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $mode = $_POST['mode'] ?? 'per_kelas';
-    $id_unit = $_POST['id_unit'] ?? '';
-    $id_kelas = $_POST['id_kelas'] ?? '';
-    $filter_type = $_POST['filter_type'] ?? 'bulan';
-    $bulan_filter = $_POST['bulan_filter'] ?? date('m');
-    $tahun_filter = $_POST['tahun_filter'] ?? date('Y');
-    $tanggal_dari = $_POST['tanggal_dari'] ?? '';
-    $tanggal_sampai = $_POST['tanggal_sampai'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'GET') {
+    $mode = $_REQUEST['mode'] ?? 'per_kelas';
+    $id_unit = $_REQUEST['id_unit'] ?? '';
+    $id_kelas = $_REQUEST['id_kelas'] ?? '';
+    $filter_type = $_REQUEST['filter_type'] ?? 'bulan';
+    $bulan_filter = $_REQUEST['bulan_filter'] ?? date('m');
+    $tahun_filter = $_REQUEST['tahun_filter'] ?? date('Y');
+    $tanggal_dari = $_REQUEST['tanggal_dari'] ?? '';
+    $tanggal_sampai = $_REQUEST['tanggal_sampai'] ?? '';
 
     // Validasi input
     if (empty($id_unit) || empty($id_kelas)) {
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         mysqli_stmt_close($stmt_presensi);
     } elseif ($mode == 'per_santri') {
-        $id_santri = $_POST['id_santri'] ?? '';
+        $id_santri = $_REQUEST['id_santri'] ?? '';
         if (empty($id_santri)) {
             die('Santri harus dipilih.');
         }
