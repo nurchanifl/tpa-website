@@ -7,7 +7,7 @@ session_start();
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Unknown User';
 
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'GET') {
+if (!empty($_REQUEST)) {
     $mode = $_REQUEST['mode'] ?? 'per_kelas';
     $id_unit = $_REQUEST['id_unit'] ?? '';
     $id_kelas = $_REQUEST['id_kelas'] ?? '';
